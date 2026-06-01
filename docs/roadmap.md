@@ -2,7 +2,7 @@
 
 > Plan de implementación por fases. Cada fase es entregable e incremental. El objetivo es construir sin improvisar, apoyándose en la documentación base. Las fases pueden solaparse parcialmente, pero el orden de dependencias debe respetarse.
 
-**Estado actual:** Fase 0 completada. Fase 1 (backend base) completada y validada a nivel de build/tests; pendiente la prueba de arranque contra una PostgreSQL real.
+**Estado actual:** Fases 0, 1 y 2 completadas y validadas a nivel de build/tests. Pendiente la prueba de arranque y verificación funcional contra una PostgreSQL real.
 
 Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
@@ -51,22 +51,24 @@ Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
 ---
 
-## Fase 2 — Productos, marcas y categorías ⬜
+## Fase 2 — Productos, marcas y categorías ✅ (validada a nivel de build; pendiente prueba con BD real)
 
 **Objetivo:** núcleo del dominio y CRUD admin completo.
 
-- ⬜ Migraciones: `brands`, `categories`, `products`, `product_events`.
-- ⬜ Entidades JPA, repositorios y DTOs.
-- ⬜ Lógica de negocio: cálculo de descuento, generación de slug, reglas de visibilidad.
-- ⬜ CRUD admin de productos (`/api/admin/products`) incluyendo flags e imagen.
-- ⬜ CRUD admin de marcas y categorías (con reglas de borrado RESTRICT).
-- ⬜ Endpoints públicos de lectura (`/api/public/products`, brands, categories) con filtros y paginación.
-- ⬜ Endpoints de eventos de producto (view / whatsapp-click) + contadores.
-- ⬜ Endpoints de dashboard (summary, most-viewed, most-whatsapp-clicks).
-- ⬜ Tests de los flujos críticos.
+- ✅ Migración `V2__phase2_catalog_attributes.sql`: atributos comerciales del producto (sabor, presentación, tipo de envase, descripción corta), `active`, `sort_order`, `brands.sort_order` y nuevo evento `PROMOTION_CLICK`. (Las tablas base se crearon en la Fase 1.)
+- ✅ Entidades ampliadas (`Brand`, `Product`), repositorios extendidos y DTOs (request/response/summary/card/detail).
+- ✅ Lógica de negocio: cálculo de descuento (derivado), generación de slug único (`SlugUtils`), reglas de visibilidad/activación.
+- ✅ CRUD admin de productos (`/api/admin/products`) con toggles (visible/active/featured/new/promo), soft delete e imágenes (Cloudinary: subir/reemplazar/eliminar).
+- ✅ CRUD admin de marcas y categorías con `toggle-active` y borrado bloqueado si hay productos asociados (409).
+- ✅ Endpoints públicos de lectura (`/api/public/products`, featured/new/promotions, detalle por slug, brands, categories) con filtros y paginación (`PageResponse`).
+- ✅ Endpoints de eventos de producto por slug (view / whatsapp-click / promotion-click) + contadores denormalizados.
+- ✅ Endpoint de métricas admin (`/api/admin/products/analytics/summary`): totales + más vistos + más clicks a WhatsApp.
+- ✅ Validaciones (Jakarta Validation) y errores consistentes (`ApiError`, incl. `ConflictException` → 409).
+- ✅ Tests unitarios de `SlugUtils` (7) y del cálculo de descuento (3); `mvn clean test` y `package` exitosos.
+- ⬜ **Pendiente:** verificación funcional contra una PostgreSQL real (migraciones V1+V2, CRUD, subida real a Cloudinary y métricas end-to-end).
 
 **Depende de:** Fase 1.
-**Entregable:** API completa según [api-contract.md](api-contract.md).
+**Entregable:** API de catálogo completa según [api-contract.md](api-contract.md). *(Compilable y testeada a nivel unitario; falta la verificación contra BD real.)*
 
 ---
 

@@ -37,6 +37,9 @@ public class Brand extends BaseAuditEntity {
     @Column(name = "is_active", nullable = false)
     private boolean active = true;
 
+    @Column(name = "sort_order", nullable = false)
+    private int sortOrder = 0;
+
     protected Brand() {
         // Requerido por JPA.
     }
@@ -91,5 +94,13 @@ public class Brand extends BaseAuditEntity {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public int getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }

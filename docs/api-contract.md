@@ -1,6 +1,6 @@
 # Contrato de API — Catálogo Londoño Distribuciones
 
-> Definición de los endpoints iniciales. Es un **contrato**, no implementación. Sirve como frontera entre frontend y backend. Los nombres, rutas y formas de payload pueden ajustarse durante la implementación, pero deben mantenerse acordados entre ambas apps.
+> Contrato de los endpoints implementados (Fase 1 auth + Fase 2 catálogo). Es la frontera entre frontend y backend. Refleja la implementación actual del backend.
 
 ---
 
@@ -9,23 +9,24 @@
 - **Base path**: `/api` (evolucionable a `/api/v1`).
 - **Formato**: JSON en request y response (excepto subida de imágenes: `multipart/form-data`).
 - **Autenticación**: header `Authorization: Bearer <accessToken>` en endpoints protegidos.
-- **Roles**: endpoints bajo `/api/admin/**` requieren rol `ADMIN`. Endpoints bajo `/api/public/**` son abiertos (solo lectura).
+- **Roles**: endpoints bajo `/api/admin/**` requieren rol `ADMIN`. Endpoints bajo `/api/public/**` son abiertos (solo lectura). `/api/auth/**` y `/api/health` son públicos.
 - **Códigos HTTP**:
-  - `200 OK`, `201 Created`, `204 No Content`
-  - `400 Bad Request` (validación), `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `409 Conflict`, `422 Unprocessable Entity`, `500 Internal Server Error`.
-- **Errores** — cuerpo consistente:
+  - `200 OK`, `201 Created`, `202 Accepted`, `204 No Content`
+  - `400 Bad Request` (validación / referencia inválida), `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `409 Conflict` (duplicado o borrado bloqueado), `502 Bad Gateway` (fallo de Cloudinary), `500 Internal Server Error`.
+- **Errores** — cuerpo consistente (`ApiError`):
   ```json
   {
     "timestamp": "2026-06-01T10:00:00Z",
     "status": 400,
     "error": "Bad Request",
-    "message": "El campo 'name' es obligatorio",
+    "message": "name: must not be blank",
     "path": "/api/admin/products"
   }
   ```
 - **Paginación** — parámetros y respuesta:
-  - Query: `?page=0&size=12&sort=createdAt,desc`
-  - Respuesta:
+  - Query: `?page=0&size=12&sort=newest`
+  - `sort` admite: `newest` (default), `oldest`, `price_asc`, `price_desc`, `name`. Sin `sort`, el orden es `sortOrder` asc + `createdAt` desc.
+  - Respuesta (`PageResponse`):
     ```json
     {
       "content": [ /* items */ ],
@@ -43,7 +44,7 @@
 ## 2. Auth — `/api/auth`
 
 ### POST `/api/auth/login`
-Inicia sesión.
+Inicia sesión. El login es por **email**.
 - **Body**:
   ```json
   { "email": "admin@londono.local", "password": "secreto" }
@@ -63,309 +64,290 @@ Inicia sesión.
 
 ### POST `/api/auth/refresh`
 Renueva el access token.
-- **Body**:
-  ```json
-  { "refreshToken": "token..." }
-  ```
-- **200**:
-  ```json
-  { "accessToken": "jwt...", "refreshToken": "token...", "expiresIn": 900 }
-  ```
-- **401**: refresh token inválido o expirado.
+- **Body**: `{ "refreshToken": "token..." }`
+- **200**: misma forma que login (nuevo `accessToken` + `refreshToken` rotado).
+- **400/401**: refresh token inválido o expirado.
 
 ### POST `/api/auth/logout`
 Invalida el refresh token actual.
 - **Auth**: requerido.
-- **Body** (o vía token): `{ "refreshToken": "token..." }`
 - **204**: sin contenido.
 
 ### GET `/api/auth/me`
 Devuelve el usuario autenticado.
 - **Auth**: requerido.
-- **200**:
-  ```json
-  { "id": 1, "name": "Administrador", "email": "admin@londono.local", "role": "ADMIN" }
-  ```
+- **200**: `{ "id": 1, "name": "Administrador", "email": "admin@londono.local", "role": "ADMIN" }`
 
 ---
 
-## 3. Productos públicos — `/api/public/products`
+## 3. Modelo de producto en la API
 
-> Solo devuelven productos con `is_visible = true`. Incluyen `discountPercentage` derivado.
+Campos expuestos por los DTO de producto (el descuento es **derivado**, nunca se recibe):
+
+| Campo | Tipo | Notas |
+|-------|------|-------|
+| `id` | number | |
+| `name` | string | obligatorio |
+| `slug` | string | autogenerado desde `name` si no se envía; único |
+| `brand` | objeto | `{ id, name, slug, logoUrl }` |
+| `category` | objeto | `{ id, name, slug }` |
+| `flavor` | string | sabor (opcional) |
+| `presentation` | string | presentación, ej. "400 ml" (opcional) |
+| `containerType` | string | tipo de envase, ej. "Botella" (opcional) |
+| `shortDescription` | string | descripción corta (≤ 300) |
+| `description` | string | descripción larga |
+| `currentPrice` | number | obligatorio, ≥ 0 |
+| `oldPrice` | number | opcional; si es > `currentPrice` se muestra descuento |
+| `discountPercentage` | number\|null | derivado; `null` si `oldPrice` es null o ≤ `currentPrice` |
+| `currency` | string | default `COP` |
+| `imageUrl` | string\|null | URL Cloudinary |
+| `imagePublicId` | string\|null | solo en respuestas admin |
+| `isFeatured` | boolean | destacado |
+| `isNew` | boolean | nuevo |
+| `isPromo` | boolean | en promoción |
+| `isVisible` | boolean | visible en el sitio público |
+| `active` | boolean | activo (soft delete usa `false`) |
+| `sortOrder` | number | orden de presentación |
+| `viewCount` / `whatsappClickCount` | number | solo admin |
+| `createdAt` / `updatedAt` | ISO-8601 | solo admin |
+
+> El catálogo público (`ProductCardResponse` / `ProductDetailResponse`) omite `imagePublicId`, contadores y timestamps. El admin (`ProductResponse`) los incluye.
+
+---
+
+## 4. Productos públicos — `/api/public/products`
+
+> Solo devuelven productos con `active = true` **y** `isVisible = true`.
 
 ### GET `/api/public/products`
-Listado paginado con filtros para el catálogo.
-- **Query params** (todos opcionales):
-  - `search` — texto libre (nombre / marca).
-  - `categorySlug` — filtrar por categoría.
-  - `brandSlug` — filtrar por marca.
-  - `onPromotion` — `true` para solo promociones.
-  - `isNew` — `true` para solo nuevos.
-  - `isFeatured` — `true` para solo destacados.
-  - `sort` — ej. `createdAt,desc`, `currentPrice,asc`.
-  - `page`, `size`.
-- **200**: respuesta paginada de `ProductPublicCard`:
-  ```json
-  {
-    "content": [
-      {
-        "id": 10,
-        "name": "Producto X",
-        "slug": "producto-x",
-        "brand": { "id": 2, "name": "Marca", "slug": "marca" },
-        "category": { "id": 3, "name": "Categoría", "slug": "categoria" },
-        "currentPrice": 50000.00,
-        "previousPrice": 70000.00,
-        "discountPercentage": 29,
-        "currency": "COP",
-        "imageUrl": "https://res.cloudinary.com/.../x.jpg",
-        "isNew": true,
-        "isFeatured": false,
-        "isOnPromotion": true
-      }
-    ],
-    "page": 0, "size": 12, "totalElements": 50, "totalPages": 5, "first": true, "last": false
-  }
-  ```
-
-### GET `/api/public/products/{slug}`
-Detalle de un producto por slug.
-- **200**: `ProductPublicDetail` (incluye `description` y datos completos).
-- **404**: no existe o no es visible.
+Catálogo paginado con filtros.
+- **Query params** (todos opcionales): `search`, `brandSlug`, `categorySlug`, `isFeatured`, `isNew`, `isPromo`, `minPrice`, `maxPrice`, `sort`, `page` (def. 0), `size` (def. 12, máx. 100).
+- **200**: `PageResponse` de `ProductCardResponse`.
 
 ### GET `/api/public/products/featured`
-Productos destacados para la home.
-- **Query**: `limit` (opcional, default ej. 8).
-- **200**: lista de `ProductPublicCard`.
+- **Query**: `limit` (default 12).
+- **200**: lista de `ProductCardResponse` (destacados, activos y visibles).
 
 ### GET `/api/public/products/new`
-Productos nuevos para la home.
-- **Query**: `limit`.
-- **200**: lista de `ProductPublicCard`.
+- **Query**: `limit` (default 12).
+- **200**: lista de `ProductCardResponse` (nuevos).
 
 ### GET `/api/public/products/promotions`
-Productos en promoción.
-- **Query**: `page`, `size` (o `limit` para home).
-- **200**: lista/paginado de `ProductPublicCard`.
+- **Query**: `limit` (default 12).
+- **200**: lista de `ProductCardResponse` (en promoción).
+
+### GET `/api/public/products/{slug}`
+Detalle público por slug.
+- **200**: `ProductDetailResponse` (incluye `description`).
+- **404**: no existe, o no está activo/visible.
 
 ---
 
-## 4. Marcas y categorías públicas
+## 5. Marcas y categorías públicas
 
 ### GET `/api/public/brands`
-- **200**: lista de marcas activas:
-  ```json
-  [ { "id": 1, "name": "Marca", "slug": "marca", "logoUrl": "..." } ]
-  ```
+- **200**: marcas activas (resumen): `[ { "id": 1, "name": "Marca", "slug": "marca", "logoUrl": null } ]`
+
+### GET `/api/public/brands/{slug}`
+- **200**: `BrandResponse` (marca activa).
+- **404**: no existe o inactiva.
 
 ### GET `/api/public/categories`
-- **200**: lista de categorías activas:
-  ```json
-  [ { "id": 1, "name": "Categoría", "slug": "categoria", "imageUrl": "..." } ]
-  ```
+- **200**: categorías activas (resumen): `[ { "id": 1, "name": "Categoría", "slug": "categoria" } ]`
+
+### GET `/api/public/categories/{slug}`
+- **200**: `CategoryResponse` (categoría activa).
+- **404**: no existe o inactiva.
 
 ---
 
-## 5. Eventos de producto (públicos) — `/api/public/products/{id}/events`
+## 6. Eventos de producto (públicos) — `/api/public/products/{slug}/events`
 
-Registran interacción para métricas. No requieren autenticación.
+Registran interacción para métricas. No requieren autenticación. Solo se registran si el producto existe, está **activo y visible**.
 
-### POST `/api/public/products/{id}/events/view`
-Registra una vista.
-- **Body** (opcional): `{ "referrer": "..." }`
-- **202 / 204**: aceptado (fire-and-forget).
+- **POST** `/api/public/products/{slug}/events/view` → **202**. Incrementa `view_count`.
+- **POST** `/api/public/products/{slug}/events/whatsapp-click` → **202**. Incrementa `whatsapp_click_count`.
+- **POST** `/api/public/products/{slug}/events/promotion-click` → **202**. Solo registra el evento.
+- **404**: el producto no existe o no está activo/visible.
 
-### POST `/api/public/products/{id}/events/whatsapp-click`
-Registra un click al botón de WhatsApp.
-- **202 / 204**: aceptado.
-
-> El backend incrementa los contadores denormalizados (`view_count`, `whatsapp_click_count`) y crea un registro en `product_events`.
+> Cada evento crea un registro en `product_events`. Los contadores denormalizados alimentan el dashboard.
 
 ---
 
-## 6. Productos admin — `/api/admin/products`
+## 7. Productos admin — `/api/admin/products`
 
-> Todos requieren `Authorization: Bearer` con rol `ADMIN`. Devuelven todos los productos (visibles u ocultos).
+> Requieren `Authorization: Bearer` con rol `ADMIN`. Operan sobre todos los productos (visibles/ocultos, activos/inactivos).
 
 ### GET `/api/admin/products`
-Listado paginado para gestión.
-- **Query**: `search`, `categoryId`, `brandId`, `isVisible`, `onPromotion`, `page`, `size`, `sort`.
-- **200**: paginado de `ProductAdmin` (incluye flags, contadores, fechas).
+- **Query**: `search`, `brandId`, `categoryId`, `active`, `isVisible`, `isFeatured`, `isNew`, `isPromo`, `sort`, `page` (def. 0), `size` (def. 20, máx. 100).
+- **200**: `PageResponse` de `ProductResponse`.
 
 ### GET `/api/admin/products/{id}`
-- **200**: `ProductAdmin` completo.
-- **404**: no existe.
+- **200**: `ProductResponse`. **404**: no existe.
 
 ### POST `/api/admin/products`
-Crea un producto (sin imagen aún; la imagen se sube en endpoint aparte, o se permite crear con imagen luego).
 - **Body**:
   ```json
   {
-    "name": "Producto X",
-    "description": "...",
+    "name": "Coca-Cola 400 ml",
     "brandId": 2,
     "categoryId": 3,
-    "currentPrice": 50000.00,
-    "previousPrice": 70000.00,
+    "flavor": "Original",
+    "presentation": "400 ml",
+    "containerType": "Botella",
+    "shortDescription": "Refresco de cola",
+    "description": "...",
+    "currentPrice": 2500.00,
+    "oldPrice": 3000.00,
     "currency": "COP",
-    "isNew": true,
     "isFeatured": false,
-    "isOnPromotion": true,
-    "isVisible": true
+    "isNew": true,
+    "isPromo": true,
+    "isVisible": true,
+    "active": true,
+    "sortOrder": 0
   }
   ```
-- **201**: producto creado (con `id` y `slug` generado). `discountPercentage` calculado.
-- **400/409**: validación / slug duplicado.
+- **201**: `ProductResponse` (con `slug` generado y `discountPercentage` calculado).
+- **400**: validación, o `brandId`/`categoryId` inexistente.
 
 ### PUT `/api/admin/products/{id}`
-Actualiza un producto.
-- **Body**: mismos campos que en creación (los editables).
-- **200**: producto actualizado.
-- **404**: no existe.
+Reemplazo completo. Los flags nulos conservan el valor actual.
+- **200**: `ProductResponse`. **404**: no existe.
 
-### PATCH `/api/admin/products/{id}/flags`
-Atajo para alternar estados.
-- **Body** (cualquier subconjunto):
-  ```json
-  { "isNew": true, "isFeatured": false, "isOnPromotion": true, "isVisible": false }
-  ```
-- **200**: producto actualizado.
+### PATCH (toggles) — alternan un estado y devuelven el `ProductResponse`
+- `PATCH /api/admin/products/{id}/toggle-visible`
+- `PATCH /api/admin/products/{id}/toggle-active`
+- `PATCH /api/admin/products/{id}/toggle-featured`
+- `PATCH /api/admin/products/{id}/toggle-new`
+- `PATCH /api/admin/products/{id}/toggle-promo`
 
-### DELETE `/api/admin/products/{id}`
-Elimina un producto (y su imagen en Cloudinary + sus eventos).
-- **204**: eliminado.
-- **404**: no existe.
+### DELETE `/api/admin/products/{id}` (soft delete)
+Pone `active = false` e `isVisible = false`. **No** borra el registro ni la imagen.
+- **204**. **404**: no existe.
 
 ---
 
-## 7. Flujo de imágenes (Cloudinary) — `/api/admin/products/{id}/image`
+## 8. Imágenes de producto (Cloudinary) — `/api/admin/products/{id}/image`
 
-> Detalle completo en [cloudinary-flow.md](cloudinary-flow.md). La subida siempre pasa por el backend.
+> Detalle del flujo en [cloudinary-flow.md](cloudinary-flow.md). Toda subida pasa por el backend; el `API_SECRET` nunca se expone. Validación: `jpg/jpeg/png/webp`, tamaño máx. configurable.
 
 ### POST `/api/admin/products/{id}/image`
-Sube o **reemplaza** la imagen principal del producto.
-- **Content-Type**: `multipart/form-data`.
-- **Form field**: `file` (imagen).
-- **Comportamiento**: sube a Cloudinary, guarda `image_url` + `image_public_id`; si ya había una imagen, elimina la anterior en Cloudinary.
-- **200**:
-  ```json
-  { "imageUrl": "https://res.cloudinary.com/.../x.jpg", "imagePublicId": "londono/products/x" }
-  ```
-- **400**: formato/tamaño inválido.
-- **404**: producto no existe.
-- **502**: fallo de Cloudinary (la BD no se actualiza).
+Sube la imagen **solo si el producto no tiene una**.
+- **Content-Type**: `multipart/form-data`, campo `file`.
+- **200**: `{ "productId": 10, "imageUrl": "...", "imagePublicId": "londono/products/x" }`
+- **400**: imagen inválida, o el producto ya tiene imagen (usar PUT).
+- **404**: producto no existe. **502**: fallo de Cloudinary (BD intacta).
+
+### PUT `/api/admin/products/{id}/image`
+Reemplaza: sube la nueva y, si tiene éxito, elimina la anterior (best-effort). Si la subida falla, se conserva la imagen anterior.
+- **200**: `{ "productId": 10, "imageUrl": "...", "imagePublicId": "..." }`
+- **400/404/502** según corresponda.
 
 ### DELETE `/api/admin/products/{id}/image`
-Elimina la imagen del producto.
-- **Comportamiento**: elimina en Cloudinary por `public_id` y limpia `image_url`/`image_public_id` en la BD.
-- **204**: eliminada.
-- **404**: producto o imagen no existe.
-
-> El mismo patrón aplica a logos de marca (`/api/admin/brands/{id}/logo`) e imágenes de categoría (`/api/admin/categories/{id}/image`) si se requiere.
+Elimina en Cloudinary y limpia `imageUrl`/`imagePublicId`. Si Cloudinary falla, responde **502** y **no** limpia la BD.
+- **204**. **404**: producto sin imagen o inexistente.
 
 ---
 
-## 8. Marcas admin — `/api/admin/brands`
+## 9. Marcas admin — `/api/admin/brands`
 
-### GET `/api/admin/brands`
-- **200**: lista (o paginado) de marcas con estado.
+> Rol `ADMIN`. Devuelven marcas activas e inactivas.
 
-### POST `/api/admin/brands`
-- **Body**: `{ "name": "Marca", "description": "...", "isActive": true }` (slug autogenerado).
-- **201**: marca creada.
-- **409**: nombre/slug duplicado.
+- **GET** `/api/admin/brands` → lista de `BrandResponse`.
+- **GET** `/api/admin/brands/{id}` → `BrandResponse`. 404 si no existe.
+- **POST** `/api/admin/brands` → **201** `BrandResponse`.
+  - **Body**: `{ "name": "Marca", "slug": "marca-opcional", "description": "...", "active": true, "sortOrder": 0 }` (slug autogenerado si se omite).
+  - **409**: nombre duplicado.
+- **PUT** `/api/admin/brands/{id}` → **200** `BrandResponse`. 409 si nombre duplicado.
+- **PATCH** `/api/admin/brands/{id}/toggle-active` → **200** `BrandResponse`.
+- **DELETE** `/api/admin/brands/{id}` → **204** si no tiene productos; **409** si tiene productos asociados (preferir desactivar).
 
-### PUT `/api/admin/brands/{id}`
-- **Body**: campos editables.
-- **200**: actualizada.
-
-### DELETE `/api/admin/brands/{id}`
-- **204**: eliminada.
-- **409**: tiene productos asociados (no se permite eliminar).
-
-### POST `/api/admin/brands/{id}/logo` / DELETE `/api/admin/brands/{id}/logo`
-- Subida/eliminación de logo (igual patrón Cloudinary).
+> Gestión de **logo** de marca (Cloudinary): fuera del alcance de la Fase 2. `logoUrl`/`logoPublicId` se exponen como solo lectura.
 
 ---
 
-## 9. Categorías admin — `/api/admin/categories`
+## 10. Categorías admin — `/api/admin/categories`
 
-### GET `/api/admin/categories`
-- **200**: lista (o paginado) de categorías.
+> Rol `ADMIN`. Devuelven categorías activas e inactivas.
 
-### POST `/api/admin/categories`
-- **Body**: `{ "name": "Categoría", "description": "...", "sortOrder": 0, "isActive": true }`.
-- **201**: creada.
-- **409**: duplicado.
+- **GET** `/api/admin/categories` → lista de `CategoryResponse`.
+- **GET** `/api/admin/categories/{id}` → `CategoryResponse`. 404 si no existe.
+- **POST** `/api/admin/categories` → **201** `CategoryResponse`.
+  - **Body**: `{ "name": "Gaseosas", "slug": "gaseosas-opcional", "description": "...", "active": true, "sortOrder": 0 }`.
+  - **409**: nombre duplicado.
+- **PUT** `/api/admin/categories/{id}` → **200** `CategoryResponse`. 409 si nombre duplicado.
+- **PATCH** `/api/admin/categories/{id}/toggle-active` → **200** `CategoryResponse`.
+- **DELETE** `/api/admin/categories/{id}` → **204** si no tiene productos; **409** si tiene productos asociados.
 
-### PUT `/api/admin/categories/{id}`
-- **200**: actualizada.
-
-### DELETE `/api/admin/categories/{id}`
-- **204**: eliminada.
-- **409**: tiene productos asociados.
-
-### POST/DELETE `/api/admin/categories/{id}/image`
-- Subida/eliminación de imagen (igual patrón Cloudinary).
+> Gestión de **imagen** de categoría (Cloudinary): fuera del alcance de la Fase 2.
 
 ---
 
-## 10. Dashboard / Métricas — `/api/admin/dashboard`
+## 11. Métricas admin — `/api/admin/products/analytics/summary`
 
-### GET `/api/admin/dashboard/summary`
-Métricas simples para el panel.
+### GET `/api/admin/products/analytics/summary`
+Resumen simple para el dashboard. Rol `ADMIN`.
 - **200**:
   ```json
   {
     "totalProducts": 120,
     "visibleProducts": 100,
-    "onPromotionProducts": 25,
+    "activeProducts": 110,
     "featuredProducts": 12,
     "newProducts": 18,
-    "totalBrands": 14,
-    "totalCategories": 9
+    "promoProducts": 25,
+    "totalViews": 5400,
+    "totalWhatsappClicks": 320,
+    "mostViewedProducts": [ { "id": 10, "name": "...", "slug": "...", "imageUrl": "...", "count": 900 } ],
+    "mostWhatsappClickedProducts": [ { "id": 7, "name": "...", "slug": "...", "imageUrl": "...", "count": 80 } ]
   }
   ```
 
-### GET `/api/admin/dashboard/most-viewed`
-- **Query**: `limit` (default 5).
-- **200**: lista de productos con `id`, `name`, `viewCount`.
-
-### GET `/api/admin/dashboard/most-whatsapp-clicks`
-- **Query**: `limit` (default 5).
-- **200**: lista de productos con `id`, `name`, `whatsappClickCount`.
-
 ---
 
-## 11. Resumen de endpoints
+## 12. Resumen de endpoints
 
 | Método | Ruta | Auth | Descripción |
 |--------|------|------|-------------|
-| POST | `/api/auth/login` | No | Login |
+| POST | `/api/auth/login` | No | Login (email) |
 | POST | `/api/auth/refresh` | No | Renovar token |
 | POST | `/api/auth/logout` | Sí | Cerrar sesión |
 | GET | `/api/auth/me` | Sí | Usuario actual |
-| GET | `/api/public/products` | No | Catálogo (filtros) |
-| GET | `/api/public/products/{slug}` | No | Detalle producto |
+| GET | `/api/health` | No | Healthcheck |
+| GET | `/api/public/products` | No | Catálogo (filtros + paginación) |
 | GET | `/api/public/products/featured` | No | Destacados |
 | GET | `/api/public/products/new` | No | Nuevos |
 | GET | `/api/public/products/promotions` | No | Promociones |
+| GET | `/api/public/products/{slug}` | No | Detalle producto |
 | GET | `/api/public/brands` | No | Marcas activas |
+| GET | `/api/public/brands/{slug}` | No | Marca por slug |
 | GET | `/api/public/categories` | No | Categorías activas |
-| POST | `/api/public/products/{id}/events/view` | No | Registrar vista |
-| POST | `/api/public/products/{id}/events/whatsapp-click` | No | Registrar click WhatsApp |
-| GET | `/api/admin/products` | ADMIN | Listar (gestión) |
+| GET | `/api/public/categories/{slug}` | No | Categoría por slug |
+| POST | `/api/public/products/{slug}/events/view` | No | Registrar vista |
+| POST | `/api/public/products/{slug}/events/whatsapp-click` | No | Registrar click WhatsApp |
+| POST | `/api/public/products/{slug}/events/promotion-click` | No | Registrar click promoción |
+| GET | `/api/admin/products` | ADMIN | Listar (gestión, filtros) |
 | GET | `/api/admin/products/{id}` | ADMIN | Detalle |
 | POST | `/api/admin/products` | ADMIN | Crear |
 | PUT | `/api/admin/products/{id}` | ADMIN | Actualizar |
-| PATCH | `/api/admin/products/{id}/flags` | ADMIN | Cambiar estados |
-| DELETE | `/api/admin/products/{id}` | ADMIN | Eliminar |
-| POST | `/api/admin/products/{id}/image` | ADMIN | Subir/reemplazar imagen |
+| PATCH | `/api/admin/products/{id}/toggle-{visible,active,featured,new,promo}` | ADMIN | Alternar estado |
+| DELETE | `/api/admin/products/{id}` | ADMIN | Soft delete |
+| POST | `/api/admin/products/{id}/image` | ADMIN | Subir imagen |
+| PUT | `/api/admin/products/{id}/image` | ADMIN | Reemplazar imagen |
 | DELETE | `/api/admin/products/{id}/image` | ADMIN | Eliminar imagen |
-| GET/POST/PUT/DELETE | `/api/admin/brands` | ADMIN | CRUD marcas |
-| GET/POST/PUT/DELETE | `/api/admin/categories` | ADMIN | CRUD categorías |
-| GET | `/api/admin/dashboard/summary` | ADMIN | Métricas |
-| GET | `/api/admin/dashboard/most-viewed` | ADMIN | Más vistos |
-| GET | `/api/admin/dashboard/most-whatsapp-clicks` | ADMIN | Más clicks |
+| GET | `/api/admin/brands` | ADMIN | Listar marcas |
+| GET | `/api/admin/brands/{id}` | ADMIN | Detalle marca |
+| POST | `/api/admin/brands` | ADMIN | Crear marca |
+| PUT | `/api/admin/brands/{id}` | ADMIN | Actualizar marca |
+| PATCH | `/api/admin/brands/{id}/toggle-active` | ADMIN | Activar/desactivar marca |
+| DELETE | `/api/admin/brands/{id}` | ADMIN | Eliminar marca (si no tiene productos) |
+| GET | `/api/admin/categories` | ADMIN | Listar categorías |
+| GET | `/api/admin/categories/{id}` | ADMIN | Detalle categoría |
+| POST | `/api/admin/categories` | ADMIN | Crear categoría |
+| PUT | `/api/admin/categories/{id}` | ADMIN | Actualizar categoría |
+| PATCH | `/api/admin/categories/{id}/toggle-active` | ADMIN | Activar/desactivar categoría |
+| DELETE | `/api/admin/categories/{id}` | ADMIN | Eliminar categoría (si no tiene productos) |
+| GET | `/api/admin/products/analytics/summary` | ADMIN | Métricas del dashboard |
 
-> Este contrato se mantendrá sincronizado con la implementación. Cualquier cambio se refleja aquí primero.
+> Este contrato se mantiene sincronizado con la implementación del backend.

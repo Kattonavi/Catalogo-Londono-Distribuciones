@@ -8,5 +8,7 @@ public enum EventType {
     /** Visita a la pagina de detalle del producto. */
     VIEW,
     /** Click al boton de WhatsApp del producto. */
-    WHATSAPP_CLICK
+    WHATSAPP_CLICK,
+    /** Click sobre la promocion del producto. */
+    PROMOTION_CLICK
 }

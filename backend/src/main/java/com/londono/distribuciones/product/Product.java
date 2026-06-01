@@ -38,8 +38,20 @@ public class Product extends BaseAuditEntity {
     @Column(name = "slug", nullable = false, length = 200, unique = true)
     private String slug;
 
+    @Column(name = "short_description", length = 300)
+    private String shortDescription;
+
     @Column(name = "description", columnDefinition = "text")
     private String description;
+
+    @Column(name = "flavor", length = 120)
+    private String flavor;
+
+    @Column(name = "presentation", length = 120)
+    private String presentation;
+
+    @Column(name = "container_type", length = 60)
+    private String containerType;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "brand_id", nullable = false)
@@ -75,6 +87,12 @@ public class Product extends BaseAuditEntity {
 
     @Column(name = "is_visible", nullable = false)
     private boolean visible = true;
+
+    @Column(name = "active", nullable = false)
+    private boolean active = true;
+
+    @Column(name = "sort_order", nullable = false)
+    private int sortOrder = 0;
 
     @Column(name = "view_count", nullable = false)
     private long viewCount = 0L;
@@ -125,12 +143,44 @@ public class Product extends BaseAuditEntity {
         this.slug = slug;
     }
 
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFlavor() {
+        return flavor;
+    }
+
+    public void setFlavor(String flavor) {
+        this.flavor = flavor;
+    }
+
+    public String getPresentation() {
+        return presentation;
+    }
+
+    public void setPresentation(String presentation) {
+        this.presentation = presentation;
+    }
+
+    public String getContainerType() {
+        return containerType;
+    }
+
+    public void setContainerType(String containerType) {
+        this.containerType = containerType;
     }
 
     public Brand getBrand() {
@@ -219,6 +269,22 @@ public class Product extends BaseAuditEntity {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public int getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
     }
 
     public long getViewCount() {

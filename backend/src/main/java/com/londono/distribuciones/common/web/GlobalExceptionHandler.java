@@ -1,6 +1,7 @@
 package com.londono.distribuciones.common.web;
 
 import com.londono.distribuciones.common.exception.BadRequestException;
+import com.londono.distribuciones.common.exception.ConflictException;
 import com.londono.distribuciones.common.exception.ImageUploadException;
 import com.londono.distribuciones.common.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,6 +47,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex, HttpServletRequest req) {
         return build(HttpStatus.FORBIDDEN, "Acceso denegado", req);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiError> handleConflict(ConflictException ex, HttpServletRequest req) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), req);
     }
 
     @ExceptionHandler(ImageUploadException.class)
