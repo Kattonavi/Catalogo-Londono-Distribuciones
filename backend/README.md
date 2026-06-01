@@ -59,6 +59,46 @@ Todas las configuraciones sensibles se inyectan por variables de entorno. **No**
 
 ---
 
+## Ejecutar localmente con PostgreSQL (Docker Compose)
+
+Para desarrollo local hay un [`docker-compose.yml`](docker-compose.yml) que levanta una PostgreSQL 16 (solo dev; en Railway la base es un servicio gestionado).
+
+1. **Variables de entorno.** Copia la plantilla y ajústala (nunca commitees `.env` real):
+   ```bash
+   cp .env.example .env
+   ```
+   > Spring Boot no lee `.env` automáticamente: exporta las variables en tu terminal/IDE, o usa los valores por defecto de `application.yml` para desarrollo.
+
+2. **Levantar PostgreSQL:**
+   ```bash
+   docker compose up -d
+   ```
+   - Mapea el puerto **5432** del host por defecto. Si ya tienes algo en 5432, usa otro puerto:
+     ```powershell
+     # PowerShell (Windows) — ejemplo con 5433
+     $env:DB_PORT="5433"; docker compose up -d
+     ```
+     ```bash
+     # bash
+     DB_PORT=5433 docker compose up -d
+     ```
+   - Crea la base `londono_distribuciones` (usuario/clave `postgres`/`postgres`).
+   - Detener: `docker compose down` (conserva datos) · `docker compose down -v` (borra datos).
+
+3. **Arrancar el backend** (apuntando a la base). Si usaste el puerto por defecto 5432 no necesitas exportar nada (coincide con `application.yml`). Si usaste otro puerto, exporta `DATABASE_URL`:
+   ```powershell
+   # PowerShell (Windows), base en 5433
+   $env:DATABASE_URL="jdbc:postgresql://localhost:5433/londono_distribuciones"
+   $env:JWT_SECRET="un-secreto-local-de-al-menos-32-caracteres-1234567890"
+   .\mvnw.cmd spring-boot:run
+   ```
+
+Al arrancar, **Flyway aplica `V1` + `V2`** automáticamente y, si la tabla `users` está vacía, se **crea el admin** (`ADMIN_SEED_*`). Luego: `curl http://localhost:8080/api/health`.
+
+> **Cloudinary:** si dejas `CLOUDINARY_*` vacías, el backend **arranca igual**; la subida real de imágenes queda deshabilitada hasta configurar credenciales válidas.
+
+---
+
 ## Comandos para ejecutar
 
 Desde la carpeta `backend/`. Usa el **Maven Wrapper** (`./mvnw` en Linux/Mac, `mvnw.cmd` en Windows); no requiere Maven instalado globalmente.
@@ -137,6 +177,7 @@ El esquema de la base de datos se gestiona con **Flyway**, no con Hibernate.
 - Convención de nombres: `V<versión>__<descripción>.sql` (p. ej. `V1__init_schema.sql`).
 - Las migraciones son **inmutables**: una vez aplicada una versión, no se edita; los cambios van en una nueva (`V2__...`, `V3__...`).
 - Hibernate está en modo `ddl-auto: validate`: nunca modifica el esquema, solo verifica que las entidades coincidan con las tablas creadas por Flyway.
+- **Dependencia (Spring Boot 4):** la autoconfiguración de Flyway vive en `spring-boot-starter-flyway` (no en `flyway-core` suelto). Sin ese starter, Flyway no se ejecuta y Hibernate falla la validación por tablas faltantes. No lo quites del `pom.xml`.
 
 Migraciones:
 - [`V1__init_schema.sql`](src/main/resources/db/migration/V1__init_schema.sql) — crea `users`, `brands`, `categories`, `products` y `product_events` según [../docs/database-model.md](../docs/database-model.md).

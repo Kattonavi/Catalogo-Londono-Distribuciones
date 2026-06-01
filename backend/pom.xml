@@ -56,10 +56,11 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Flyway (migraciones) -->
+        <!-- Flyway (migraciones). En Spring Boot 4 la autoconfiguracion vive en
+             el starter; flyway-core suelto no la activa. -->
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>

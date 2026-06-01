@@ -2,7 +2,7 @@
 
 > Plan de implementación por fases. Cada fase es entregable e incremental. El objetivo es construir sin improvisar, apoyándose en la documentación base. Las fases pueden solaparse parcialmente, pero el orden de dependencias debe respetarse.
 
-**Estado actual:** Fases 0, 1 y 2 completadas y validadas a nivel de build/tests. Pendiente la prueba de arranque y verificación funcional contra una PostgreSQL real.
+**Estado actual:** Fases 0, 1 y 2 completadas y **validadas funcionalmente contra una PostgreSQL real** (Docker Compose local): Flyway V1+V2, auth (login/refresh/me), catálogo público y CRUD admin. Único pendiente: la subida real de imágenes a Cloudinary (requiere credenciales).
 
 Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
@@ -28,7 +28,7 @@ Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
 ---
 
-## Fase 1 — Backend base + Auth + Cloudinary ✅ (validada a nivel de build; pendiente prueba con BD real)
+## Fase 1 — Backend base + Auth + Cloudinary ✅ (validada funcionalmente contra PostgreSQL real)
 
 **Objetivo:** API funcional con autenticación segura y flujo de imágenes operativo.
 
@@ -43,15 +43,16 @@ Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 - ✅ `CloudinaryService` con métodos preparados: `uploadImage`, `replaceImage`, `deleteImage`, y validación de imagen (formato jpg/jpeg/png/webp, tamaño máximo configurable).
 - ✅ Manejo de errores consistente (formato `ApiError` JSON, `GlobalExceptionHandler`) y CORS restringido a `FRONTEND_URL`.
 - ✅ Healthcheck público `GET /api/health`.
-- ✅ Build y tests exitosos: `mvn clean test` (3 tests OK) y `mvn -DskipTests package` (JAR ejecutable generado).
-- ⬜ **Pendiente:** prueba de arranque real (`mvnw spring-boot:run`) contra una PostgreSQL en ejecución, verificando migraciones Flyway, login y `/api/health` end-to-end.
+- ✅ Build y tests exitosos: `mvn clean test` (10 tests OK) y `mvn -DskipTests package` (JAR ejecutable generado).
+- ✅ **Validación funcional contra PostgreSQL real** (Docker Compose): Flyway aplicó `V1`+`V2`, se creó el admin seed, y se verificaron `GET /api/health`, `POST /api/auth/login` (email), `POST /api/auth/refresh` (con rotación) y `GET /api/auth/me`.
+- ⬜ **Pendiente:** subida real de imágenes a Cloudinary (requiere credenciales válidas). El arranque con `CLOUDINARY_*` vacías se verificó sin errores.
 
 **Depende de:** Fase 0.
-**Entregable:** backend que arranca, autentica y gestiona imágenes; verificable con cliente HTTP. *(Base completa y compilable; falta la verificación funcional contra una BD real.)*
+**Entregable:** backend que arranca, autentica y gestiona imágenes; verificable con cliente HTTP. ✅ *(Validado contra BD real; solo falta la subida real a Cloudinary.)*
 
 ---
 
-## Fase 2 — Productos, marcas y categorías ✅ (validada a nivel de build; pendiente prueba con BD real)
+## Fase 2 — Productos, marcas y categorías ✅ (validada funcionalmente contra PostgreSQL real)
 
 **Objetivo:** núcleo del dominio y CRUD admin completo.
 
@@ -65,10 +66,11 @@ Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 - ✅ Endpoint de métricas admin (`/api/admin/products/analytics/summary`): totales + más vistos + más clicks a WhatsApp.
 - ✅ Validaciones (Jakarta Validation) y errores consistentes (`ApiError`, incl. `ConflictException` → 409).
 - ✅ Tests unitarios de `SlugUtils` (7) y del cálculo de descuento (3); `mvn clean test` y `package` exitosos.
-- ⬜ **Pendiente:** verificación funcional contra una PostgreSQL real (migraciones V1+V2, CRUD, subida real a Cloudinary y métricas end-to-end).
+- ✅ **Validación funcional contra PostgreSQL real** (Docker Compose): crear marca → categoría → producto; descuento derivado correcto (3000→2500 = 17%); slug único (`coca-cola-400-ml-2`); aparición en el catálogo público y detalle por slug; eventos `view`/`whatsapp-click` (202); métricas (`analytics/summary`); regla de borrado de marca con productos (**409**); validación de request inválido (**400**).
+- ⬜ **Pendiente:** subida real de imágenes de producto a Cloudinary (requiere credenciales válidas); tests de integración con BD (p. ej. Testcontainers).
 
 **Depende de:** Fase 1.
-**Entregable:** API de catálogo completa según [api-contract.md](api-contract.md). *(Compilable y testeada a nivel unitario; falta la verificación contra BD real.)*
+**Entregable:** API de catálogo completa según [api-contract.md](api-contract.md). ✅ *(Validada contra BD real; solo falta la subida real a Cloudinary.)*
 
 ---
 

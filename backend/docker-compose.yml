@@ -1,0 +1,32 @@
+# Docker Compose SOLO para desarrollo local: levanta una PostgreSQL para el backend.
+# No usar en produccion (en Railway la base de datos es un servicio gestionado).
+#
+# Uso:
+#   docker compose up -d        # levanta la base
+#   docker compose down         # la detiene (conserva los datos en el volumen)
+#   docker compose down -v      # la detiene y BORRA los datos
+#
+# El puerto del host es configurable con DB_PORT (default 5432). Si ya tienes
+# algo escuchando en 5432, exporta DB_PORT=5433 (o el que prefieras) antes de
+# 'docker compose up -d' y apunta DATABASE_URL a ese puerto.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: londono-postgres
+    environment:
+      POSTGRES_DB: londono_distribuciones
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - londono_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d londono_distribuciones"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  londono_pgdata:
