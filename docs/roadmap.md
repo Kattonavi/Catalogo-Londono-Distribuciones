@@ -2,7 +2,7 @@
 
 > Plan de implementación por fases. Cada fase es entregable e incremental. El objetivo es construir sin improvisar, apoyándose en la documentación base. Las fases pueden solaparse parcialmente, pero el orden de dependencias debe respetarse.
 
-**Estado actual:** Fases 0, 1 y 2 completadas y **validadas funcionalmente contra una PostgreSQL real**. Fase 3 (frontend público) en curso: primera versión con `lint` y `build` exitosos; pendiente la verificación visual con datos reales. Pendientes de fondo: subida real de imágenes a Cloudinary (requiere credenciales).
+**Estado actual:** Fases 0, 1 y 2 completadas y **validadas funcionalmente contra una PostgreSQL real**. Fase 3 (frontend público) y Fase 4 (panel admin) en su primera versión: `lint` + `build` OK e integración con la API validada contra el backend real. Pendientes: prueba UI en navegador y subida real de imágenes a Cloudinary (requiere credenciales).
 
 Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
@@ -99,20 +99,23 @@ Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
 ---
 
-## Fase 4 — Panel admin ⬜
+## Fase 4 — Panel admin 🟡 (primera versión: lint + build OK e integración API validada; pendiente prueba UI en navegador)
 
 **Objetivo:** gestión cómoda del catálogo desde la web.
 
-- ⬜ Layout de admin (sidebar + contenido) y rutas protegidas.
-- ⬜ Login y manejo de sesión (access + refresh) en el frontend.
-- ⬜ CRUD de productos con formularios (React Hook Form + Zod), flags y vista previa de descuento.
-- ⬜ Subida/reemplazo/eliminación de imágenes con previsualización y progreso.
-- ⬜ CRUD de marcas y categorías.
-- ⬜ Confirmaciones para acciones destructivas y toasts de feedback.
-- ⬜ Manejo de errores de la API en UI.
+- ✅ Layout de admin (sidebar + topbar responsive) y rutas protegidas bajo `/admin/(panel)`; navbar público oculto en `/admin` vía `SiteChrome`.
+- ✅ Login (`/admin/login`) y manejo de sesión: `accessToken`/`refreshToken` en localStorage, refresh automático ante 401 y `AdminGuard` con `/api/auth/me`. Logout.
+- ✅ Dashboard con métricas (`analytics/summary`) + rankings (más vistos / más clicks WhatsApp).
+- ✅ CRUD de productos con React Hook Form + Zod, flags (visible/activo/destacado/nuevo/promo), filtros, paginación, soft delete y **preview de descuento** en vivo.
+- ✅ Gestión de imágenes de producto: subir/reemplazar/eliminar con previsualización y validación (jpg/png/webp, máx. 5 MB).
+- ✅ CRUD de marcas y categorías (gestor genérico) con `toggle-active` y manejo de **409** (borrado bloqueado por productos asociados).
+- ✅ Confirmaciones para acciones destructivas y **toasts** de feedback; estados loading/error/empty en todas las vistas.
+- ✅ Manejo de errores de la API en UI (mensajes del `ApiError` del backend).
+- ✅ Validación: `npm run lint` y `npm run build` exitosos; flujo de API del admin probado contra backend real (login, me, analytics, lista, toggle, crear, 409, 401); rutas admin sirven 200.
+- ⬜ **Pendiente:** prueba interactiva en navegador (clic real en formularios, subida real de imagen a Cloudinary). No fue posible automatizar capturas/navegador en este entorno.
 
 **Depende de:** Fase 1 (auth) y Fase 2 (CRUD API).
-**Entregable:** administrador autónomo para gestionar todo el catálogo.
+**Entregable:** administrador del catálogo. *(Primera versión compilada, con integración de API validada; falta la prueba UI en navegador y las imágenes reales de Cloudinary.)*
 
 ---
 

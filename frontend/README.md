@@ -56,12 +56,35 @@ npm run lint       # ESLint (config flat de Next 16)
 
 ## Páginas
 
+### Público
+
 | Ruta | Descripción |
 |------|-------------|
 | `/` | Landing visual: hero, categorías, promociones, destacados, nuevos, marcas, confianza/contacto |
 | `/catalogo` | Catálogo con búsqueda, filtros (marca, categoría, promo/nuevo/destacado), orden, paginación, skeleton/empty/error |
 | `/productos/[slug]` | Detalle: imagen grande, marca, categoría, sabor, presentación, envase, precios, descuento, badges, WhatsApp, relacionados |
 | `/promociones` | Hero corto + grid de promociones + CTA WhatsApp |
+
+### Panel admin (Fase 4)
+
+| Ruta | Descripción |
+|------|-------------|
+| `/admin/login` | Login por email + contraseña (React Hook Form + Zod) |
+| `/admin` | Dashboard: métricas (`/api/admin/products/analytics/summary`) + rankings de más vistos y más clicks a WhatsApp |
+| `/admin/productos` | Lista con filtros (búsqueda, marca, categoría, activo, visible), toggles (destacado/nuevo/promo/visible/activo), soft delete, paginación |
+| `/admin/productos/nuevo` | Crear producto (formulario con preview de descuento) |
+| `/admin/productos/[id]/editar` | Editar producto + gestión de imagen (subir/reemplazar/eliminar con preview) |
+| `/admin/marcas` | CRUD de marcas (crear/editar/activar/eliminar; 409 si tiene productos) |
+| `/admin/categorias` | CRUD de categorías (idéntico a marcas) |
+
+**Auth admin (MVP):**
+- Tokens (`accessToken` + `refreshToken`) en `localStorage` (`src/lib/adminAuth.ts`). *Nota: para producción conviene migrar a cookies httpOnly.*
+- `services/adminApi.ts` añade el `Bearer`, intenta **refresh automático** ante 401 y, si falla, limpia tokens y **redirige a `/admin/login`**.
+- `AdminGuard` valida la sesión con `/api/auth/me` y protege todo `/admin/(panel)`.
+- El navbar/footer públicos se ocultan en `/admin` vía `SiteChrome` (sin mover las páginas públicas).
+- **Feedback:** toasts de éxito/error y diálogos de confirmación para acciones destructivas.
+
+> El admin requiere `NEXT_PUBLIC_API_URL` y un usuario `ADMIN` en el backend (seed: `admin@londono.local` / `ChangeMe123!` en desarrollo).
 
 ---
 
