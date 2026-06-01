@@ -2,7 +2,7 @@
 
 > Plan de implementación por fases. Cada fase es entregable e incremental. El objetivo es construir sin improvisar, apoyándose en la documentación base. Las fases pueden solaparse parcialmente, pero el orden de dependencias debe respetarse.
 
-**Estado actual:** Fases 0, 1 y 2 completadas y **validadas funcionalmente contra una PostgreSQL real** (Docker Compose local): Flyway V1+V2, auth (login/refresh/me), catálogo público y CRUD admin. Único pendiente: la subida real de imágenes a Cloudinary (requiere credenciales).
+**Estado actual:** Fases 0, 1 y 2 completadas y **validadas funcionalmente contra una PostgreSQL real**. Fase 3 (frontend público) en curso: primera versión con `lint` y `build` exitosos; pendiente la verificación visual con datos reales. Pendientes de fondo: subida real de imágenes a Cloudinary (requiere credenciales).
 
 Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
@@ -74,24 +74,26 @@ Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
 ---
 
-## Fase 3 — Frontend público visual ⬜
+## Fase 3 — Frontend público visual 🟡 (primera versión: lint + build OK; pendiente verificación visual con datos reales)
 
 **Objetivo:** la cara pública premium, mobile-first, conectada a la API.
 
-- ⬜ Inicializar Next.js 16 + React 19 + TS + Tailwind 4 + shadcn/ui en `frontend/`.
-- ⬜ Configurar tokens de diseño (color, tipografía, radios, sombras) según [visual-direction.md](visual-direction.md).
-- ⬜ TanStack Query + cliente API + variable `NEXT_PUBLIC_API_BASE_URL`.
-- ⬜ Componentes base: ProductCard, Badge, PriceTag, WhatsAppButton, skeletons.
-- ⬜ Página **Home** con hero, marcas, destacados, nuevos, promociones, categorías.
-- ⬜ Página **Catálogo** con búsqueda, filtros (bottom sheet móvil / sidebar escritorio), orden y grid.
-- ⬜ Página **Producto** con galería, precios, descripción y WhatsApp prellenado.
-- ⬜ Página **Promociones**.
-- ⬜ Registro de eventos (view / whatsapp-click) hacia el backend.
-- ⬜ Animaciones suaves (Framer Motion) respetando `reduced-motion`.
-- ⬜ Responsive y rendimiento (imágenes Cloudinary optimizadas).
+- ✅ Inicializar Next.js 16.2 + React 19.2 + TS + Tailwind 4 en `frontend/` (UI a mano estilo shadcn, sin CLI, para build determinista).
+- ✅ Configurar tokens de diseño (color de marca, WhatsApp, badges, radios, tipografía del sistema) según [visual-direction.md](visual-direction.md) vía `@theme`.
+- ✅ TanStack Query + capa de servicios (`services/api.ts` con `safeGet`/`getJson`) + variable `NEXT_PUBLIC_API_URL`.
+- ✅ Componentes base: `ProductCard`, `Badge`/`ProductBadges`, `Price`, `WhatsAppButton`, `SkeletonCard`, `ProductImage`, `Navbar`, `Footer`.
+- ✅ Página **Home** (`/`) con hero, categorías, promociones, destacados, nuevos, marcas y confianza/contacto.
+- ✅ Página **Catálogo** (`/catalogo`) con búsqueda (debounce), filtros (marca, categoría, promo/nuevo/destacado), orden, paginación y estados loading/empty/error.
+- ✅ Página **Producto** (`/productos/[slug]`) con imagen grande, atributos (sabor/presentación/envase), precios, descuento, badges, WhatsApp y relacionados.
+- ✅ Página **Promociones** (`/promociones`) con hero corto, grid y CTA WhatsApp.
+- ✅ Registro de eventos (`view` / `whatsapp-click` / `promotion-click`) fire-and-forget hacia el backend, sin bloquear la navegación.
+- ✅ Animaciones suaves (motion / Framer Motion) respetando `prefers-reduced-motion`.
+- ✅ Responsive mobile-first e imágenes vía `next/image` (Cloudinary) con placeholder.
+- ✅ Validación: `npm run lint` y `npm run build` exitosos; smoke test de rutas (`/`, `/catalogo`, `/promociones` → 200; slug inexistente → 404).
+- ⬜ **Pendiente:** verificación visual con el backend real poblado (datos, imágenes Cloudinary reales) y ajustes finos de UI/UX.
 
 **Depende de:** Fase 2 (API pública).
-**Entregable:** sitio público navegable y atractivo, conectado a datos reales.
+**Entregable:** sitio público navegable y atractivo. *(Primera versión compilada y validada a nivel de lint/build/smoke; falta la verificación visual end-to-end con datos reales.)*
 
 ---
 

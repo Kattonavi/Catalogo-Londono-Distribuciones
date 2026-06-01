@@ -69,11 +69,11 @@ Catalogo_Londono_Distribuciones/
 │   ├── visual-direction.md    # Dirección visual y diseño UI
 │   ├── cloudinary-flow.md     # Flujo de imágenes con Cloudinary
 │   └── roadmap.md             # Fases del proyecto
-├── backend/                   # API Spring Boot 4 (Fase 1 — inicializado)
-└── frontend/                  # (Futuro) App Next.js
+├── backend/                   # API Spring Boot 4 (Fases 1–2: auth + CRUD catálogo)
+└── frontend/                  # App Next.js 16 (Fase 3: frontend público)
 ```
 
-> `backend/` ya existe (base de la Fase 1). `frontend/` aún **no existe**; se creará en la Fase 3 según el [roadmap](docs/roadmap.md).
+> `backend/` y `frontend/` ya existen. El backend cubre auth + CRUD de catálogo (validado contra PostgreSQL real); el frontend es la primera versión del sitio público. Detalle de avance en el [roadmap](docs/roadmap.md).
 
 ---
 
@@ -111,18 +111,15 @@ Catalogo_Londono_Distribuciones/
 
 ---
 
-## Comandos futuros previstos
-
-> Aún no aplicables — el código no existe todavía. Quedan documentados como referencia para las próximas fases.
+## Comandos
 
 ### Frontend (`frontend/`)
 ```bash
 npm install            # Instalar dependencias
-npm run dev            # Servidor de desarrollo
+npm run dev            # Servidor de desarrollo (http://localhost:3000)
 npm run build          # Build de producción
 npm run start          # Servir build de producción
-npm run lint           # Linter
-npm run typecheck      # Verificación de tipos TypeScript
+npm run lint           # Linter (ESLint)
 ```
 
 ### Backend (`backend/`)
@@ -137,9 +134,9 @@ npm run typecheck      # Verificación de tipos TypeScript
 
 ## Estado actual
 
-**🟢 Backend base initialized / Phase 1 completed** — Fase 0 ✅ · Fase 1 ✅ (build y tests OK).
+**🟢 Backend (Fases 1–2) completado y validado · Frontend público (Fase 3) primera versión** — Fases 0 ✅ · 1 ✅ · 2 ✅ · 3 🟡.
 
-La documentación base está completa y el **backend** (Spring Boot 4.0.6) está inicializado: seguridad con JWT + refresh tokens, entidades y migraciones (Flyway/PostgreSQL), integración con Cloudinary y endpoint de salud. Compila y `mvn clean test` pasa correctamente. **Pendiente:** la prueba de arranque contra una PostgreSQL real (`mvnw spring-boot:run`). El **frontend aún no existe** (se construye en la Fase 3). Próximos pasos por fases en el [roadmap](docs/roadmap.md).
+El **backend** (Spring Boot 4.0.6) cubre auth (JWT + refresh) y el CRUD de catálogo (productos, marcas, categorías, imágenes Cloudinary, eventos y métricas), **validado funcionalmente contra una PostgreSQL real** (Flyway V1+V2, login/refresh, CRUD y catálogo público). El **frontend** (Next.js 16.2) es la primera versión del sitio público (inicio, catálogo, detalle, promociones), con `lint` y `build` exitosos. **Pendientes:** subida real de imágenes a Cloudinary (requiere credenciales) y verificación visual del frontend con datos reales. Próximos pasos por fases en el [roadmap](docs/roadmap.md).
 
 ---
 
