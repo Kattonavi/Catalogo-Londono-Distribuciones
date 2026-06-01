@@ -69,11 +69,11 @@ Catalogo_Londono_Distribuciones/
 │   ├── visual-direction.md    # Dirección visual y diseño UI
 │   ├── cloudinary-flow.md     # Flujo de imágenes con Cloudinary
 │   └── roadmap.md             # Fases del proyecto
-├── frontend/                  # (Futuro) App Next.js
-└── backend/                   # (Futuro) API Spring Boot
+├── backend/                   # API Spring Boot 4 (Fase 1 — inicializado)
+└── frontend/                  # (Futuro) App Next.js
 ```
 
-> `frontend/` y `backend/` aún **no existen**. Se crearán por fases según el [roadmap](docs/roadmap.md).
+> `backend/` ya existe (base de la Fase 1). `frontend/` aún **no existe**; se creará en la Fase 3 según el [roadmap](docs/roadmap.md).
 
 ---
 
@@ -137,9 +137,9 @@ npm run typecheck      # Verificación de tipos TypeScript
 
 ## Estado actual
 
-**🟡 Planning / Initial setup** — Fase 0.
+**🟢 Backend base initialized / Phase 1 completed** — Fase 0 ✅ · Fase 1 ✅ (build y tests OK).
 
-Actualmente solo existe la documentación base en `docs/`. No hay código de frontend ni backend, ni dependencias instaladas. El siguiente paso es comenzar la implementación por fases según el [roadmap](docs/roadmap.md).
+La documentación base está completa y el **backend** (Spring Boot 4.0.6) está inicializado: seguridad con JWT + refresh tokens, entidades y migraciones (Flyway/PostgreSQL), integración con Cloudinary y endpoint de salud. Compila y `mvn clean test` pasa correctamente. **Pendiente:** la prueba de arranque contra una PostgreSQL real (`mvnw spring-boot:run`). El **frontend aún no existe** (se construye en la Fase 3). Próximos pasos por fases en el [roadmap](docs/roadmap.md).
 
 ---
 

@@ -46,7 +46,7 @@
 Inicia sesión.
 - **Body**:
   ```json
-  { "username": "admin", "password": "secreto" }
+  { "email": "admin@londono.local", "password": "secreto" }
   ```
 - **200**:
   ```json
@@ -55,9 +55,10 @@ Inicia sesión.
     "refreshToken": "token...",
     "tokenType": "Bearer",
     "expiresIn": 900,
-    "user": { "id": 1, "username": "admin", "role": "ADMIN", "fullName": "..." }
+    "user": { "id": 1, "name": "Administrador", "email": "admin@londono.local", "role": "ADMIN" }
   }
   ```
+  > `expiresIn` es la vida del access token en **segundos**. `refreshToken` es un token opaco con rotación en cada `refresh`.
 - **401**: credenciales inválidas.
 
 ### POST `/api/auth/refresh`
@@ -83,7 +84,7 @@ Devuelve el usuario autenticado.
 - **Auth**: requerido.
 - **200**:
   ```json
-  { "id": 1, "username": "admin", "role": "ADMIN", "fullName": "...", "email": "..." }
+  { "id": 1, "name": "Administrador", "email": "admin@londono.local", "role": "ADMIN" }
   ```
 
 ---

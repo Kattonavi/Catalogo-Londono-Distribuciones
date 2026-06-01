@@ -2,13 +2,13 @@
 
 > Plan de implementación por fases. Cada fase es entregable e incremental. El objetivo es construir sin improvisar, apoyándose en la documentación base. Las fases pueden solaparse parcialmente, pero el orden de dependencias debe respetarse.
 
-**Estado actual:** Fase 0 en curso (documentación). El código aún no existe.
+**Estado actual:** Fase 0 completada. Fase 1 (backend base) completada y validada a nivel de build/tests; pendiente la prueba de arranque contra una PostgreSQL real.
 
 Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
 ---
 
-## Fase 0 — Documentación y setup 🟡
+## Fase 0 — Documentación y setup ✅
 
 **Objetivo:** dejar la base documental y el esqueleto del monorepo listos para implementar sin improvisar.
 
@@ -20,31 +20,34 @@ Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 - ✅ `docs/visual-direction.md`.
 - ✅ `docs/cloudinary-flow.md`.
 - ✅ `docs/roadmap.md`.
-- ⬜ Definir color de acento de marca y assets básicos (logo, número de WhatsApp).
-- ⬜ Crear cuentas/servicios: repo en GitHub, proyecto en Railway, cuenta Cloudinary.
-- ⬜ Decidir estructura de carpetas `frontend/` y `backend/` (sin código aún).
+- ✅ Estructura del monorepo definida; carpeta `backend/` creada (Fase 1). `frontend/` se creará en la Fase 3.
+- ⬜ Definir color de acento de marca y assets básicos (logo, número de WhatsApp) — tarea operativa, no bloquea; se retoma al iniciar el frontend (Fase 3).
+- ⬜ Crear cuentas/servicios: repo en GitHub, proyecto en Railway, cuenta Cloudinary — tarea operativa, no bloquea; necesaria para el deploy (Fase 6).
 
-**Entregable:** documentación completa y decisiones de setup tomadas.
+**Entregable:** documentación completa y decisiones de setup tomadas. ✅
 
 ---
 
-## Fase 1 — Backend base + Auth + Cloudinary ⬜
+## Fase 1 — Backend base + Auth + Cloudinary ✅ (validada a nivel de build; pendiente prueba con BD real)
 
 **Objetivo:** API funcional con autenticación segura y flujo de imágenes operativo.
 
-- ⬜ Inicializar proyecto Spring Boot 4 (Java 25, Maven) en `backend/`.
-- ⬜ Configurar conexión a PostgreSQL y Flyway.
-- ⬜ Migración inicial: tabla `users` (+ esquema base).
-- ⬜ Spring Security + JWT + Refresh Tokens.
-- ⬜ Endpoints `/api/auth` (login, refresh, logout, me).
-- ⬜ Seed de usuario `ADMIN` inicial.
-- ⬜ Integración Cloudinary SDK + variables de entorno.
-- ⬜ Validaciones de imagen (formato/tamaño) y servicio de subida/reemplazo/eliminación.
-- ⬜ Manejo de errores consistente (formato de error JSON) y CORS.
-- ⬜ Healthcheck.
+- ✅ Inicializar proyecto Spring Boot 4.0.6 (Java 25, Maven + Maven Wrapper) en `backend/`.
+- ✅ Configurar conexión a PostgreSQL y Flyway (Hibernate en `ddl-auto: validate`).
+- ✅ Migración inicial `V1__init_schema.sql` con el esquema base completo: `users`, `brands`, `categories`, `products`, `product_events`.
+- ✅ Entidades base y repositorios JPA: `User`, `Brand`, `Category`, `Product`, `ProductEvent`.
+- ✅ Spring Security base + JWT + Refresh Tokens (refresh token opaco con rotación, almacenado en `users`).
+- ✅ Endpoints `/api/auth` (login por **email**, refresh, logout, me).
+- ✅ Seed de usuario `ADMIN` inicial (solo si la tabla `users` está vacía; credenciales por variables de entorno).
+- ✅ Integración Cloudinary SDK + variables de entorno (`CloudinaryConfig`, `CloudinaryProperties`).
+- ✅ `CloudinaryService` con métodos preparados: `uploadImage`, `replaceImage`, `deleteImage`, y validación de imagen (formato jpg/jpeg/png/webp, tamaño máximo configurable).
+- ✅ Manejo de errores consistente (formato `ApiError` JSON, `GlobalExceptionHandler`) y CORS restringido a `FRONTEND_URL`.
+- ✅ Healthcheck público `GET /api/health`.
+- ✅ Build y tests exitosos: `mvn clean test` (3 tests OK) y `mvn -DskipTests package` (JAR ejecutable generado).
+- ⬜ **Pendiente:** prueba de arranque real (`mvnw spring-boot:run`) contra una PostgreSQL en ejecución, verificando migraciones Flyway, login y `/api/health` end-to-end.
 
 **Depende de:** Fase 0.
-**Entregable:** backend que arranca, autentica y gestiona imágenes; verificable con cliente HTTP.
+**Entregable:** backend que arranca, autentica y gestiona imágenes; verificable con cliente HTTP. *(Base completa y compilable; falta la verificación funcional contra una BD real.)*
 
 ---
 
