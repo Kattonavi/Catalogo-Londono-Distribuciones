@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import type { ProductCard, ProductDetail as ProductDetailType } from "@/types/product";
 import { productMessage } from "@/lib/whatsapp";
+import { formatPrice } from "@/lib/format";
 import { registerProductEvent } from "@/services/events";
 import { ProductImage } from "@/components/ui/ProductImage";
 import { ProductBadges } from "@/components/ui/ProductBadges";
@@ -96,8 +97,9 @@ export function ProductDetail({
             {product.discountPercentage != null && product.oldPrice != null && (
               <p className="mt-1 text-sm font-semibold text-promo">
                 Ahorras{" "}
-                {Math.round(product.oldPrice - product.currentPrice).toLocaleString(
-                  "es-CO",
+                {formatPrice(
+                  product.oldPrice - product.currentPrice,
+                  product.currency,
                 )}{" "}
                 ({product.discountPercentage}%)
               </p>

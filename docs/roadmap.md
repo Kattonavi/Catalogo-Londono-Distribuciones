@@ -74,7 +74,7 @@ Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
 ---
 
-## Fase 3 — Frontend público visual 🟡 (primera versión: lint + build OK; pendiente verificación visual con datos reales)
+## Fase 3 — Frontend público visual 🟡 (integrado con backend real + datos de prueba; pendiente revisión visual humana)
 
 **Objetivo:** la cara pública premium, mobile-first, conectada a la API.
 
@@ -90,10 +90,12 @@ Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 - ✅ Animaciones suaves (motion / Framer Motion) respetando `prefers-reduced-motion`.
 - ✅ Responsive mobile-first e imágenes vía `next/image` (Cloudinary) con placeholder.
 - ✅ Validación: `npm run lint` y `npm run build` exitosos; smoke test de rutas (`/`, `/catalogo`, `/promociones` → 200; slug inexistente → 404).
-- ⬜ **Pendiente:** verificación visual con el backend real poblado (datos, imágenes Cloudinary reales) y ajustes finos de UI/UX.
+- ✅ **Integración real validada** contra backend + PostgreSQL con datos de prueba ([`backend/scripts/seed-catalog-dev.http`](../backend/scripts/seed-catalog-dev.http)): home/promociones renderizan SSR con productos sembrados; filtros del catálogo (marca/categoría/promo/nuevo/destacado) consultan la API correctamente; detalle con atributos, precios, descuento (-17%/-19%) y relacionados; enlaces de WhatsApp con mensaje prellenado por producto; placeholders de imagen correctos sin Cloudinary.
+- ✅ Ajuste menor de pulido: el ahorro en el detalle ahora usa formato de moneda (`Ahorras $500 (17%)`).
+- ⬜ **Pendiente:** revisión visual humana / capturas (no fue posible automatizar screenshots en este entorno) e imágenes reales de Cloudinary.
 
 **Depende de:** Fase 2 (API pública).
-**Entregable:** sitio público navegable y atractivo. *(Primera versión compilada y validada a nivel de lint/build/smoke; falta la verificación visual end-to-end con datos reales.)*
+**Entregable:** sitio público navegable y atractivo, integrado con la API real. *(Validado a nivel de lint/build/smoke + integración con datos de prueba; falta la revisión visual humana y las imágenes reales.)*
 
 ---
 

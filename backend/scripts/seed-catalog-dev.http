@@ -1,0 +1,341 @@
+###############################################################################
+# seed-catalog-dev.http
+#
+# Datos de prueba de catálogo para DESARROLLO LOCAL de Londoño Distribuciones.
+# Pobla marcas, categorías y productos representativos vía la API admin.
+#
+# Cómo usarlo:
+#   - VS Code: extensión "REST Client" (humao.rest-client).
+#   - IntelliJ IDEA / WebStorm: cliente HTTP integrado.
+#   Ejecuta las requests de arriba hacia abajo (la de login debe ir primero;
+#   las demás reutilizan su token y los IDs de las respuestas encadenadas).
+#
+# Requisitos:
+#   - Backend corriendo en {{host}} (ver backend/README.md).
+#   - Admin sembrado (ADMIN_SEED_*). Por defecto: admin@londono.local / ChangeMe123!
+#
+# Seguridad:
+#   - NO contiene tokens ni secretos reales: el token se obtiene en runtime
+#     desde la respuesta del login ({{login.response.body.accessToken}}).
+#   - Cambia las credenciales/host según tu entorno.
+###############################################################################
+
+@host = http://localhost:8080
+@adminEmail = admin@londono.local
+@adminPassword = ChangeMe123!
+
+### Login (obtiene el accessToken; las siguientes requests lo reutilizan)
+# @name login
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "{{adminEmail}}", "password": "{{adminPassword}}" }
+
+@token = {{login.response.body.accessToken}}
+
+#============================== MARCAS =======================================
+
+### Marca: Glacial
+# @name bGlacial
+POST {{host}}/api/admin/brands
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Glacial" }
+
+### Marca: Coca-Cola
+# @name bCoca
+POST {{host}}/api/admin/brands
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Coca-Cola" }
+
+### Marca: Postobón
+# @name bPostobon
+POST {{host}}/api/admin/brands
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Postobón" }
+
+### Marca: Pony Malta
+# @name bPony
+POST {{host}}/api/admin/brands
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Pony Malta" }
+
+### Marca: INC
+# @name bInc
+POST {{host}}/api/admin/brands
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "INC" }
+
+#============================ CATEGORÍAS =====================================
+
+### Categoría: Gaseosas
+# @name cGaseosas
+POST {{host}}/api/admin/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Gaseosas" }
+
+### Categoría: Aguas
+# @name cAguas
+POST {{host}}/api/admin/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Aguas" }
+
+### Categoría: Jugos
+# @name cJugos
+POST {{host}}/api/admin/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Jugos" }
+
+### Categoría: Maltas
+# @name cMaltas
+POST {{host}}/api/admin/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Maltas" }
+
+### Categoría: Hidratantes
+# @name cHidratantes
+POST {{host}}/api/admin/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Hidratantes" }
+
+### Categoría: Cervezas
+# @name cCervezas
+POST {{host}}/api/admin/categories
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Cervezas" }
+
+#============================= PRODUCTOS =====================================
+# Los productos referencian los IDs de las respuestas de marcas/categorías.
+# Algunos son destacados / nuevos / en promoción (con precio anterior).
+
+### Coca-Cola 400 ml (destacado + promoción)
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Coca-Cola 400 ml",
+  "brandId": {{bCoca.response.body.id}},
+  "categoryId": {{cGaseosas.response.body.id}},
+  "presentation": "400 ml",
+  "containerType": "Botella PET",
+  "shortDescription": "Refresco de cola, clásico.",
+  "currentPrice": 2500,
+  "oldPrice": 3000,
+  "isFeatured": true,
+  "isPromo": true
+}
+
+### Coca-Cola Zero 400 ml (nuevo)
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Coca-Cola Zero 400 ml",
+  "brandId": {{bCoca.response.body.id}},
+  "categoryId": {{cGaseosas.response.body.id}},
+  "flavor": "Sin azúcar",
+  "presentation": "400 ml",
+  "containerType": "Botella PET",
+  "shortDescription": "Cero azúcar, mismo sabor.",
+  "currentPrice": 2500,
+  "isNew": true
+}
+
+### Coca-Cola 1.5 L (destacado)
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Coca-Cola 1.5 L",
+  "brandId": {{bCoca.response.body.id}},
+  "categoryId": {{cGaseosas.response.body.id}},
+  "presentation": "1.5 L",
+  "containerType": "Botella PET",
+  "shortDescription": "Ideal para compartir.",
+  "currentPrice": 5500,
+  "isFeatured": true
+}
+
+### Pepsi 2.5 L
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Pepsi 2.5 L",
+  "brandId": {{bPostobon.response.body.id}},
+  "categoryId": {{cGaseosas.response.body.id}},
+  "presentation": "2.5 L",
+  "containerType": "Botella PET",
+  "shortDescription": "Tamaño familiar.",
+  "currentPrice": 7500
+}
+
+### Colombiana 2.5 L (promoción)
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Colombiana 2.5 L",
+  "brandId": {{bPostobon.response.body.id}},
+  "categoryId": {{cGaseosas.response.body.id}},
+  "flavor": "Kola",
+  "presentation": "2.5 L",
+  "containerType": "Botella PET",
+  "shortDescription": "La nuestra de toda la vida.",
+  "currentPrice": 6900,
+  "oldPrice": 8500,
+  "isPromo": true
+}
+
+### Pony Malta Mini 330 ml (nuevo)
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Pony Malta Mini 330 ml",
+  "brandId": {{bPony.response.body.id}},
+  "categoryId": {{cMaltas.response.body.id}},
+  "presentation": "330 ml",
+  "containerType": "Botella vidrio",
+  "shortDescription": "Energía de la buena.",
+  "currentPrice": 1800,
+  "isNew": true
+}
+
+### Pony Malta 1.5 L (destacado)
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Pony Malta 1.5 L",
+  "brandId": {{bPony.response.body.id}},
+  "categoryId": {{cMaltas.response.body.id}},
+  "presentation": "1.5 L",
+  "containerType": "Botella PET",
+  "shortDescription": "Para toda la familia.",
+  "currentPrice": 6200,
+  "isFeatured": true
+}
+
+### Agua Glacial Natural
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Agua Glacial Natural",
+  "brandId": {{bGlacial.response.body.id}},
+  "categoryId": {{cAguas.response.body.id}},
+  "presentation": "600 ml",
+  "containerType": "Botella PET",
+  "shortDescription": "Hidratación pura.",
+  "currentPrice": 1500
+}
+
+### Agua Glacial con Gas (nuevo)
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Agua Glacial con Gas",
+  "brandId": {{bGlacial.response.body.id}},
+  "categoryId": {{cAguas.response.body.id}},
+  "flavor": "Con gas",
+  "presentation": "600 ml",
+  "containerType": "Botella PET",
+  "shortDescription": "Refrescante y burbujeante.",
+  "currentPrice": 1800,
+  "isNew": true
+}
+
+### Gatorade Sabor Naranja 500 ml (promoción)
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Gatorade Sabor Naranja 500 ml",
+  "brandId": {{bPostobon.response.body.id}},
+  "categoryId": {{cHidratantes.response.body.id}},
+  "flavor": "Naranja",
+  "presentation": "500 ml",
+  "containerType": "Botella PET",
+  "shortDescription": "Repón lo que perdiste.",
+  "currentPrice": 3500,
+  "oldPrice": 4200,
+  "isPromo": true
+}
+
+### Jugo Hit Mora Azul 500 ml (destacado)
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Jugo Hit Mora Azul 500 ml",
+  "brandId": {{bPostobon.response.body.id}},
+  "categoryId": {{cJugos.response.body.id}},
+  "flavor": "Mora azul",
+  "presentation": "500 ml",
+  "containerType": "Botella PET",
+  "shortDescription": "Sabor a fruta de verdad.",
+  "currentPrice": 3200,
+  "isFeatured": true
+}
+
+### Hidratante INC Limonada 500 ml (nuevo)
+POST {{host}}/api/admin/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Hidratante INC Limonada 500 ml",
+  "brandId": {{bInc.response.body.id}},
+  "categoryId": {{cHidratantes.response.body.id}},
+  "flavor": "Limonada",
+  "presentation": "500 ml",
+  "containerType": "Botella PET",
+  "shortDescription": "Hidratación con sabor.",
+  "currentPrice": 2800,
+  "isNew": true
+}
+
+#============================ VERIFICACIÓN ===================================
+
+### Catálogo público
+GET {{host}}/api/public/products?size=50
+
+### Destacados
+GET {{host}}/api/public/products/featured
+
+### Promociones
+GET {{host}}/api/public/products/promotions

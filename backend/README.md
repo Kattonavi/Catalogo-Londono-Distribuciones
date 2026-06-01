@@ -97,6 +97,16 @@ Al arrancar, **Flyway aplica `V1` + `V2`** automáticamente y, si la tabla `user
 
 > **Cloudinary:** si dejas `CLOUDINARY_*` vacías, el backend **arranca igual**; la subida real de imágenes queda deshabilitada hasta configurar credenciales válidas.
 
+### Datos de prueba (seed de desarrollo)
+
+Para poblar un catálogo representativo de Londoño Distribuciones (marcas, categorías y productos, con destacados/nuevos/promociones) usa [`scripts/seed-catalog-dev.http`](scripts/seed-catalog-dev.http):
+
+- Ábrelo con la extensión **REST Client** (VS Code) o el **cliente HTTP** de IntelliJ y ejecuta las requests de arriba abajo (login primero; las demás reutilizan el token y los IDs encadenados).
+- **No contiene secretos ni tokens reales**: el token se toma en runtime de la respuesta del login.
+- Sin imágenes (Cloudinary opcional): el frontend muestra **placeholders** con degradado de marca.
+
+> Alternativa rápida sin editor REST: puedes replicar las mismas llamadas con `curl` usando el `accessToken` del login.
+
 ---
 
 ## Comandos para ejecutar
