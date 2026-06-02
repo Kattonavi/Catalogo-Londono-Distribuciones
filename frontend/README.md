@@ -142,3 +142,11 @@ src/
 - **Imágenes:** Cloudinary (`res.cloudinary.com`) configurado en `next.config.ts`; si un producto no tiene imagen se muestra un placeholder con degradado de marca.
 - **Tipografía:** stack del sistema (sin descargas externas) para un build fiable; se puede cambiar a una fuente custom con `next/font` más adelante.
 - **Accesibilidad/rendimiento:** respeta `prefers-reduced-motion`, usa `next/image`, y las animaciones priorizan `transform`/`opacity`.
+
+## Despliegue en Railway
+
+- Root Directory: `frontend` · Builder: **Railpack** ([`railway.toml`](railway.toml)) · Build: `npm ci && npm run build` · Start: `npm run start` · Healthcheck: `/`.
+- Variables (públicas, se fijan en **build**): `NEXT_PUBLIC_API_URL` (URL pública del backend Railway) y `NEXT_PUBLIC_WHATSAPP_PHONE_NUMBER`. Ver [`.env.example`](.env.example).
+- Guía completa: [../docs/deployment-railway.md](../docs/deployment-railway.md).
+
+> Si cambias `NEXT_PUBLIC_*`, hay que **reconstruir** (las variables se inlinean en el build).

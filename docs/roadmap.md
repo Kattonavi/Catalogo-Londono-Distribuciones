@@ -2,7 +2,7 @@
 
 > Plan de implementación por fases. Cada fase es entregable e incremental. El objetivo es construir sin improvisar, apoyándose en la documentación base. Las fases pueden solaparse parcialmente, pero el orden de dependencias debe respetarse.
 
-**Estado actual:** Fases 0, 1 y 2 completadas y **validadas funcionalmente contra una PostgreSQL real**. Fase 3 (frontend público) y Fase 4 (panel admin) en su primera versión: `lint` + `build` OK e integración con la API validada contra el backend real. Pendientes: prueba UI en navegador y subida real de imágenes a Cloudinary (requiere credenciales).
+**Estado actual:** Fases 0–4 completadas (backend + frontend público + panel admin, validados contra PostgreSQL real). **Fase 6 en preparación:** repo listo para Railway (backend con Dockerfile Java 25, `railway.toml` de ambos servicios, guía de deploy). Pendientes: ejecutar el deploy en Railway, prueba UI en navegador y subida real de imágenes a Cloudinary (requiere credenciales).
 
 Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
@@ -134,22 +134,21 @@ Leyenda de estado: ⬜ Pendiente · 🟡 En curso · ✅ Completado
 
 ---
 
-## Fase 6 — Deploy Railway y optimización ⬜
+## Fase 6 — Deploy Railway y optimización 🟡 (preparación lista; deploy real pendiente)
 
 **Objetivo:** producción estable, rápida y segura.
 
-- ⬜ Configurar servicios en Railway: PostgreSQL, backend, frontend.
-- ⬜ Variables de entorno por servicio (DB, JWT, Cloudinary, CORS, API base URL, WhatsApp).
-- ⬜ Pipeline GitHub → Railway (build y deploy por subdirectorio).
-- ⬜ Migraciones Flyway aplicadas en el arranque de producción.
-- ⬜ Dominios y CORS coherentes (frontend ↔ backend).
-- ⬜ Optimización de rendimiento (caché/ISR, imágenes, lazy loading, bundle).
-- ⬜ SEO básico (metadatos, slugs, sitemap, Open Graph).
-- ⬜ Revisión de seguridad (headers, secretos, rate limiting básico en eventos).
-- ⬜ Pruebas finales en producción y checklist de calidad visual ([visual-direction.md](visual-direction.md) §13).
+- ✅ Preparación del repo para Railway: `backend/Dockerfile` (Java 25, multi-stage, sin BOM), `backend/.dockerignore`, `backend/railway.toml` (builder DOCKERFILE, healthcheck `/api/health`), `frontend/railway.toml` (Railpack, `npm ci`).
+- ✅ Plantillas de variables por servicio (`backend/.env.example`, `frontend/.env.example`) sin secretos, con la referencia `DATABASE_URL` al servicio Postgres de Railway.
+- ✅ Guía de despliegue [deployment-railway.md](deployment-railway.md): servicios, orden de deploy, CORS, Cloudinary, admin seed y troubleshooting (incl. Java 25 vs Railpack JDK 21, BOM, `mvnw` permisos).
+- ✅ Limpieza de configuraciones locales/temporales (BOM en Dockerfile/railway.toml; `.env`/`.env.local` gitignored; `docker-compose.yml` marcado como dev; seed sin tokens reales).
+- ⬜ Configurar los 3 servicios en Railway y desplegar (PostgreSQL → backend → frontend).
+- ⬜ Ajustar `FRONTEND_URL` (CORS) tras desplegar el frontend y redeploy del backend.
+- ⬜ Configurar Cloudinary real y probar subida de imágenes end-to-end.
+- ⬜ Optimización de rendimiento, SEO básico (sitemap/OG), revisión de seguridad y pruebas finales en producción.
 
 **Depende de:** todas las fases anteriores.
-**Entregable:** aplicación en producción, optimizada y lista para usar.
+**Entregable:** aplicación en producción. *(Repo preparado y validado localmente; falta ejecutar el deploy en Railway.)*
 
 ---
 

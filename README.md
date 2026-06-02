@@ -150,4 +150,5 @@ El **backend** (Spring Boot 4.0.6) cubre auth (JWT + refresh) y el CRUD de catá
 | [api-contract.md](docs/api-contract.md) | Contrato de endpoints de la API |
 | [visual-direction.md](docs/visual-direction.md) | Dirección visual y diseño UI |
 | [cloudinary-flow.md](docs/cloudinary-flow.md) | Flujo de imágenes con Cloudinary |
+| [deployment-railway.md](docs/deployment-railway.md) | **Guía de despliegue en Railway** (PostgreSQL + backend Dockerfile Java 25 + frontend) |
 | [roadmap.md](docs/roadmap.md) | Fases del proyecto |

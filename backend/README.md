@@ -230,3 +230,14 @@ Contrato completo y formas de payload en [../docs/api-contract.md](../docs/api-c
 - **Slug único** generado con `SlugUtils` (sufijos `-2`, `-3`, …). El descuento nunca se recibe del cliente: se deriva de los precios.
 - **Imágenes de producto** vía Cloudinary: `POST` solo si no hay imagen, `PUT` reemplaza, `DELETE` elimina; ante fallo de Cloudinary se responde 502 sin dejar la BD inconsistente.
 - **Imágenes de marca/categoría:** fuera del alcance de la Fase 2 (campos de logo/imagen expuestos solo lectura).
+
+## Despliegue en Railway
+
+El backend se despliega con **Dockerfile** (Java 25 fijo, multi-stage) para evitar que Railpack instale JDK 21.
+
+- Root Directory: `backend` · Builder: Dockerfile ([`railway.toml`](railway.toml)) · Healthcheck: `/api/health`.
+- [`Dockerfile`](Dockerfile): `eclipse-temurin:25-jdk` (build) → `eclipse-temurin:25-jre` (runtime).
+- Variables de entorno: ver [`.env.example`](.env.example) (plantilla sin secretos).
+- Guía completa (variables, CORS, orden de deploy, troubleshooting): [../docs/deployment-railway.md](../docs/deployment-railway.md).
+
+> `docker-compose.yml` es **solo para desarrollo local** (PostgreSQL); en Railway la BD es un servicio gestionado.

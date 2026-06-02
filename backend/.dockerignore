@@ -1,0 +1,20 @@
+# Contexto de build limpio para Docker/Railway.
+# Solo se necesitan: pom.xml, mvnw, .mvn/ y src/.
+
+target/
+.git/
+.gitignore
+.idea/
+.vscode/
+
+# Nunca incluir secretos ni logs en la imagen.
+.env
+.env.*
+*.log
+
+# Archivos de infra/dev que no afectan el build.
+Dockerfile
+.dockerignore
+docker-compose.yml
+README.md
+scripts/

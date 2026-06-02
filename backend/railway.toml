@@ -1,4 +1,7 @@
-﻿[build]
+# Railway — servicio Backend (Root Directory: backend)
+# Construye con el Dockerfile (Java 25), no con Railpack.
+
+[build]
 builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 

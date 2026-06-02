@@ -1,0 +1,14 @@
+# Railway — servicio Frontend (Root Directory: frontend)
+# Next.js 16 con Railpack. Usa npm ci porque existe package-lock.json.
+# `next start` respeta el PORT que inyecta Railway automáticamente.
+
+[build]
+builder = "RAILPACK"
+buildCommand = "npm ci && npm run build"
+
+[deploy]
+startCommand = "npm run start"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
