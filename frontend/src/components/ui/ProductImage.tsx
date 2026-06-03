@@ -24,11 +24,11 @@ export function ProductImage({
     return (
       <div
         className={cn(
-          "flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-100 to-brand-200",
+          "flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-100 to-brand-200 dark:from-brand-900/40 dark:to-brand-800/30",
           className,
         )}
       >
-        <Package className="size-12 text-brand-400" aria-hidden="true" />
+        <Package className="size-12 text-brand-400 dark:text-brand-500" aria-hidden="true" />
       </div>
     );
   }

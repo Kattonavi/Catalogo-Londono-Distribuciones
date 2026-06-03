@@ -18,8 +18,8 @@ const sizeStyles: Record<Size, string> = {
 };
 
 const variantStyles: Record<Variant, string> = {
-  solid: "bg-wa text-white hover:bg-wa-dark shadow-sm",
-  outline: "border-2 border-wa text-wa-dark hover:bg-wa/10 bg-white",
+  solid: "bg-wa text-white hover:bg-wa-dark shadow-sm shadow-wa/25",
+  outline: "border-2 border-wa text-wa-dark hover:bg-wa/10 bg-card dark:text-wa",
 };
 
 export function WhatsAppButton({

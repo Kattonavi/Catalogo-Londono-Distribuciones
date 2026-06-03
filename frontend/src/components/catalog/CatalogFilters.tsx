@@ -14,7 +14,10 @@ const flagLabels: Record<FlagKey, string> = {
 };
 
 const selectClass =
-  "h-11 w-full rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-200";
+  "h-11 w-full rounded-full border border-border bg-input px-4 text-sm font-medium text-foreground shadow-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-500/30";
+
+const labelClass =
+  "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground";
 
 export function CatalogFilters({
   brands,
@@ -47,7 +50,7 @@ export function CatalogFilters({
     <div className="space-y-4">
       <div className="grid gap-3 sm:grid-cols-3">
         <label className="block">
-          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <span className={labelClass}>
             Marca
           </span>
           <select
@@ -65,7 +68,7 @@ export function CatalogFilters({
         </label>
 
         <label className="block">
-          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <span className={labelClass}>
             Categoría
           </span>
           <select
@@ -83,7 +86,7 @@ export function CatalogFilters({
         </label>
 
         <label className="block">
-          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <span className={labelClass}>
             Ordenar
           </span>
           <select
@@ -101,7 +104,7 @@ export function CatalogFilters({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <SlidersHorizontal className="size-4 text-slate-400" />
+        <SlidersHorizontal className="size-4 text-muted-foreground" />
         {(Object.keys(flagLabels) as FlagKey[]).map((key) => {
           const active = flags[key];
           return (
@@ -113,8 +116,8 @@ export function CatalogFilters({
               className={cn(
                 "rounded-full border px-4 py-2 text-sm font-semibold transition-colors",
                 active
-                  ? "border-brand-600 bg-brand-600 text-white"
-                  : "border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:text-brand-700",
+                  ? "border-brand-600 bg-brand-600 text-white dark:border-brand-500 dark:bg-brand-500"
+                  : "border-border bg-card text-muted-foreground hover:border-brand-300 hover:text-brand-600 dark:hover:text-brand-400",
               )}
             >
               {flagLabels[key]}
@@ -125,7 +128,7 @@ export function CatalogFilters({
           <button
             type="button"
             onClick={onClear}
-            className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+            className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold text-muted-foreground hover:bg-subtle hover:text-foreground"
           >
             <X className="size-4" /> Limpiar
           </button>

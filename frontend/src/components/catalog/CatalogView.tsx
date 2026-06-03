@@ -115,7 +115,7 @@ export function CatalogView() {
         <button
           type="button"
           onClick={() => setShowFilters((v) => !v)}
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 shadow-sm md:hidden"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-border bg-card px-5 text-sm font-semibold text-foreground shadow-sm md:hidden"
           aria-expanded={showFilters}
         >
           <SlidersHorizontal className="size-4" />
@@ -125,7 +125,7 @@ export function CatalogView() {
 
       <div
         className={cn(
-          "rounded-card border border-slate-100 bg-white p-4 shadow-sm md:block",
+          "rounded-card border border-border bg-card p-4 shadow-sm md:block",
           showFilters ? "block" : "hidden",
         )}
       >
@@ -158,7 +158,7 @@ export function CatalogView() {
       </div>
 
       {!productsQuery.isLoading && !productsQuery.isError && (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           {total === 0
             ? "Sin resultados"
             : `${total} ${total === 1 ? "producto" : "productos"}`}
@@ -194,7 +194,7 @@ export function CatalogView() {
               >
                 <ChevronLeft className="size-4" /> Anterior
               </Button>
-              <span className="text-sm font-medium text-slate-500">
+              <span className="text-sm font-medium text-muted-foreground">
                 Página {page + 1} de {totalPages}
               </span>
               <Button
@@ -220,14 +220,14 @@ function EmptyState({
   onClear: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-card border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
-      <span className="grid size-14 place-items-center rounded-full bg-slate-100 text-slate-400">
+    <div className="flex flex-col items-center justify-center rounded-card border border-dashed border-border bg-card px-6 py-16 text-center">
+      <span className="grid size-14 place-items-center rounded-full bg-muted text-muted-foreground">
         <PackageOpen className="size-7" />
       </span>
-      <h3 className="mt-4 text-lg font-bold text-slate-900">
+      <h3 className="mt-4 text-lg font-bold text-foreground">
         No encontramos productos
       </h3>
-      <p className="mt-1 max-w-sm text-sm text-slate-500">
+      <p className="mt-1 max-w-sm text-sm text-muted-foreground">
         {hasActiveFilters
           ? "Prueba ajustar la búsqueda o quitar algunos filtros."
           : "Aún no hay productos disponibles. Vuelve pronto."}
@@ -243,14 +243,14 @@ function EmptyState({
 
 function ErrorState({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-card border border-dashed border-rose-200 bg-rose-50/50 px-6 py-16 text-center">
-      <span className="grid size-14 place-items-center rounded-full bg-rose-100 text-rose-500">
+    <div className="flex flex-col items-center justify-center rounded-card border border-dashed border-rose-300/60 bg-rose-50/60 px-6 py-16 text-center dark:border-rose-500/30 dark:bg-rose-500/5">
+      <span className="grid size-14 place-items-center rounded-full bg-rose-100 text-rose-500 dark:bg-rose-500/15 dark:text-rose-400">
         <AlertTriangle className="size-7" />
       </span>
-      <h3 className="mt-4 text-lg font-bold text-slate-900">
+      <h3 className="mt-4 text-lg font-bold text-foreground">
         No pudimos cargar el catálogo
       </h3>
-      <p className="mt-1 max-w-sm text-sm text-slate-500">
+      <p className="mt-1 max-w-sm text-sm text-muted-foreground">
         Revisa tu conexión e inténtalo de nuevo.
       </p>
       <Button variant="primary" className="mt-5" onClick={onRetry}>

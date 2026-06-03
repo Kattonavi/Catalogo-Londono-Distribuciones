@@ -15,10 +15,10 @@ export function BrandShowcase({ brands }: { brands: BrandSummary[] }) {
           <Link
             key={brand.id}
             href={`/catalogo?marca=${brand.slug}`}
-            className="flex min-w-[8.5rem] shrink-0 flex-col items-center gap-3 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+            className="flex min-w-[8.5rem] shrink-0 flex-col items-center gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-300/60 hover:shadow-md dark:hover:border-brand-500/40"
           >
             {brand.logoUrl ? (
-              <span className="relative size-14 overflow-hidden rounded-full bg-slate-50">
+              <span className="relative size-14 overflow-hidden rounded-full bg-muted">
                 <Image
                   src={brand.logoUrl}
                   alt={brand.name}
@@ -28,11 +28,11 @@ export function BrandShowcase({ brands }: { brands: BrandSummary[] }) {
                 />
               </span>
             ) : (
-              <span className="grid size-14 place-items-center rounded-full bg-brand-50 text-xl font-black text-brand-600">
+              <span className="grid size-14 place-items-center rounded-full bg-brand-50 text-xl font-black text-brand-600 dark:bg-brand-500/15 dark:text-brand-300">
                 {brand.name.charAt(0).toUpperCase()}
               </span>
             )}
-            <span className="text-center text-sm font-semibold text-slate-700">
+            <span className="text-center text-sm font-semibold text-foreground">
               {brand.name}
             </span>
           </Link>

@@ -13,7 +13,7 @@ const variantStyles: Record<BadgeVariant, string> = {
   new: "bg-new text-white",
   featured: "bg-featured text-white",
   discount: "bg-promo text-white shadow-sm",
-  neutral: "bg-slate-900/80 text-white backdrop-blur",
+  neutral: "bg-foreground/80 text-background backdrop-blur",
 };
 
 export function Badge({

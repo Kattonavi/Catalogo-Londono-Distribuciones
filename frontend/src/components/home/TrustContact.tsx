@@ -27,29 +27,29 @@ export function TrustContact() {
         {items.map((item) => (
           <div
             key={item.title}
-            className="rounded-card border border-slate-100 bg-white p-6 shadow-sm"
+            className="rounded-card border border-border bg-card p-6 shadow-sm"
           >
-            <span className="grid size-11 place-items-center rounded-xl bg-brand-50 text-brand-600">
+            <span className="grid size-11 place-items-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300">
               <item.icon className="size-6" />
             </span>
-            <h3 className="mt-4 text-lg font-bold text-slate-900">
+            <h3 className="mt-4 text-lg font-bold text-foreground">
               {item.title}
             </h3>
-            <p className="mt-1 text-sm leading-relaxed text-slate-500">
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
               {item.text}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="mt-8 overflow-hidden rounded-card bg-gradient-to-br from-slate-900 to-slate-800 p-8 text-white sm:p-12">
+      <div className="mt-8 overflow-hidden rounded-card bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950 p-8 text-white shadow-lg shadow-brand-900/20 ring-1 ring-white/10 sm:p-12">
         <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="max-w-xl">
             <h3 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight sm:text-3xl">
               <MessageCircle className="size-7 text-wa" />
               ¿Listo para hacer tu pedido?
             </h3>
-            <p className="mt-2 text-slate-300">
+            <p className="mt-2 text-brand-100">
               Escríbenos por WhatsApp y te atendemos de inmediato. Sin
               complicaciones.
             </p>

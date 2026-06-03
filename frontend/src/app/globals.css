@@ -1,18 +1,23 @@
 @import "tailwindcss";
 
+/* Activa el modo oscuro por clase `.dark` en <html> (en vez de media query),
+   para poder alternar manualmente con el botón de tema. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ===================== Tokens de diseño (Tailwind 4) ===================== */
 @theme {
-  /* Marca: índigo/violeta — fresco, moderno y comercial. */
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-200: #c7d2fe;
-  --color-brand-300: #a5b4fc;
-  --color-brand-400: #818cf8;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
-  --color-brand-800: #3730a3;
-  --color-brand-900: #312e81;
+  /* Marca: azul — confiable, comercial y con buen contraste en ambos modos. */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+  --color-brand-950: #172554;
 
   /* WhatsApp (reservado solo para sus botones). */
   --color-wa: #25d366;
@@ -31,21 +36,61 @@
   --radius-card: 1.25rem;
 }
 
-/* ===================== Base ===================== */
-:root {
-  color-scheme: light;
+/* Tokens semánticos: se mapean a variables que cambian entre claro/oscuro.
+   `inline` hace que las utilidades (bg-card, text-foreground, …) lean la
+   variable en tiempo de ejecución, por lo que responden a la clase `.dark`. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
+/* ===================== Esquemas claro / oscuro ===================== */
+:root {
+  color-scheme: light;
+  --background: #f5f8fd;       /* lienzo claro con leve tinte azul */
+  --foreground: #0f1c33;       /* texto principal (navy oscuro) */
+  --card: #ffffff;             /* superficies / tarjetas */
+  --muted: #eaf0fa;            /* fondos sutiles (chips, placeholders) */
+  --muted-foreground: #5b6b86; /* texto secundario */
+  --subtle: #f1f5fb;           /* fondos aún más tenues / hover */
+  --border: #dbe3f0;           /* bordes */
+  --input: #ffffff;            /* fondo de inputs */
+  --ring: #3b82f6;             /* anillo de foco */
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #070d1c;       /* base oscura azul profunda */
+  --foreground: #e8eefb;       /* texto principal claro */
+  --card: #0f1a30;             /* paneles / tarjetas azul oscuro */
+  --muted: #16243f;            /* fondos sutiles */
+  --muted-foreground: #93a6c7; /* texto secundario */
+  --subtle: #132038;           /* hover / fondos tenues */
+  --border: #243650;           /* bordes */
+  --input: #0f1a30;            /* fondo de inputs */
+  --ring: #60a5fa;             /* anillo de foco */
+}
+
+/* ===================== Base ===================== */
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #f8fafc; /* slate-50 */
-  color: #0f172a; /* slate-900 */
+  background-color: var(--background);
+  color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Respeta reduce-motion: desactiva animaciones y scroll suave. */
@@ -72,7 +117,7 @@ body {
 .skeleton {
   position: relative;
   overflow: hidden;
-  background-color: #e2e8f0; /* slate-200 */
+  background-color: var(--muted);
 }
 
 .skeleton::after {
@@ -87,6 +132,15 @@ body {
     transparent
   );
   animation: shimmer 1.6s infinite;
+}
+
+.dark .skeleton::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.06),
+    transparent
+  );
 }
 
 /* Oculta scrollbar en strips horizontales manteniendo el scroll. */

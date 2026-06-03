@@ -20,7 +20,7 @@ export function Price({
     <div className={cn("flex flex-wrap items-baseline gap-x-2 gap-y-0.5", className)}>
       <span
         className={cn(
-          "font-extrabold tracking-tight text-slate-900",
+          "font-extrabold tracking-tight text-foreground",
           size === "lg" ? "text-3xl" : "text-xl",
         )}
       >
@@ -29,7 +29,7 @@ export function Price({
       {hasDiscount && (
         <span
           className={cn(
-            "font-medium text-slate-400 line-through",
+            "font-medium text-muted-foreground/70 line-through",
             size === "lg" ? "text-base" : "text-sm",
           )}
         >

@@ -30,11 +30,11 @@ export function ProductCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="group flex flex-col overflow-hidden rounded-card border border-slate-100 bg-white shadow-sm transition-shadow hover:shadow-lg"
+      className="group flex flex-col overflow-hidden rounded-card border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-300/60 hover:shadow-xl hover:shadow-brand-900/5 dark:hover:border-brand-500/40 dark:hover:shadow-black/40"
     >
       <Link
         href={`/productos/${product.slug}`}
-        className="relative block aspect-[4/5] overflow-hidden bg-slate-50"
+        className="relative block aspect-[4/5] overflow-hidden bg-muted"
       >
         <ProductImage
           src={product.imageUrl}
@@ -58,17 +58,17 @@ export function ProductCard({
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         {product.brand && (
-          <span className="text-xs font-semibold uppercase tracking-wide text-brand-600">
+          <span className="text-xs font-semibold uppercase tracking-wide text-brand-600 dark:text-brand-400">
             {product.brand.name}
           </span>
         )}
         <Link href={`/productos/${product.slug}`} className="group/title">
-          <h3 className="line-clamp-2 font-bold leading-snug text-slate-900 group-hover/title:text-brand-700">
+          <h3 className="line-clamp-2 font-bold leading-snug text-foreground transition-colors group-hover/title:text-brand-600 dark:group-hover/title:text-brand-400">
             {product.name}
           </h3>
         </Link>
         {subtitle && (
-          <p className="line-clamp-1 text-sm text-slate-500">{subtitle}</p>
+          <p className="line-clamp-1 text-sm text-muted-foreground">{subtitle}</p>
         )}
 
         <div className="mt-auto flex flex-col gap-3 pt-2">

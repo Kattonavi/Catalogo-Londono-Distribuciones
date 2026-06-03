@@ -38,14 +38,14 @@ export default async function PromocionesPage() {
         {promotions.length > 0 ? (
           <ProductGrid products={promotions} whatsappEvent="promotion-click" />
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-card border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
-            <span className="grid size-14 place-items-center rounded-full bg-slate-100 text-slate-400">
+          <div className="flex flex-col items-center justify-center rounded-card border border-dashed border-border bg-card px-6 py-16 text-center">
+            <span className="grid size-14 place-items-center rounded-full bg-muted text-muted-foreground">
               <PackageOpen className="size-7" />
             </span>
-            <h2 className="mt-4 text-lg font-bold text-slate-900">
+            <h2 className="mt-4 text-lg font-bold text-foreground">
               No hay promociones activas
             </h2>
-            <p className="mt-1 max-w-sm text-sm text-slate-500">
+            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
               Vuelve pronto o explora todo el catálogo mientras tanto.
             </p>
             <Link
@@ -57,11 +57,11 @@ export default async function PromocionesPage() {
           </div>
         )}
 
-        <div className="mt-12 flex flex-col items-center gap-4 rounded-card bg-slate-900 px-6 py-10 text-center text-white">
+        <div className="mt-12 flex flex-col items-center gap-4 rounded-card bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950 px-6 py-10 text-center text-white shadow-lg shadow-brand-900/20 ring-1 ring-white/10">
           <h2 className="text-2xl font-extrabold tracking-tight">
             ¿Quieres pedir alguna promoción?
           </h2>
-          <p className="max-w-md text-slate-300">
+          <p className="max-w-md text-brand-100">
             Escríbenos y te ayudamos a armar tu pedido al instante.
           </p>
           <WhatsAppButton

@@ -39,14 +39,14 @@ export function ProductDetail({
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <Link
         href="/catalogo"
-        className="mb-6 inline-flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-brand-700"
+        className="mb-6 inline-flex items-center gap-1 text-sm font-semibold text-muted-foreground transition-colors hover:text-brand-600 dark:hover:text-brand-400"
       >
         <ChevronLeft className="size-4" /> Volver al catálogo
       </Link>
 
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Imagen */}
-        <div className="relative aspect-square overflow-hidden rounded-card border border-slate-100 bg-white">
+        <div className="relative aspect-square overflow-hidden rounded-card border border-border bg-card">
           <ProductImage
             src={product.imageUrl}
             alt={product.name}
@@ -73,16 +73,16 @@ export function ProductDetail({
           {product.brand && (
             <Link
               href={`/catalogo?marca=${product.brand.slug}`}
-              className="text-sm font-bold uppercase tracking-wide text-brand-600 hover:text-brand-800"
+              className="text-sm font-bold uppercase tracking-wide text-brand-600 transition-colors hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
             >
               {product.brand.name}
             </Link>
           )}
-          <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="mt-2 text-3xl font-black tracking-tight text-foreground sm:text-4xl">
             {product.name}
           </h1>
           {product.shortDescription && (
-            <p className="mt-3 text-lg text-slate-500">
+            <p className="mt-3 text-lg text-muted-foreground">
               {product.shortDescription}
             </p>
           )}
@@ -118,13 +118,13 @@ export function ProductDetail({
           </div>
 
           {attributes.length > 0 && (
-            <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 rounded-card border border-slate-100 bg-white p-5">
+            <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 rounded-card border border-border bg-card p-5">
               {attributes.map((attr) => (
                 <div key={attr.label}>
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {attr.label}
                   </dt>
-                  <dd className="mt-0.5 font-semibold text-slate-800">
+                  <dd className="mt-0.5 font-semibold text-foreground">
                     {attr.value}
                   </dd>
                 </div>
@@ -134,8 +134,8 @@ export function ProductDetail({
 
           {product.description && (
             <div className="mt-8">
-              <h2 className="text-lg font-bold text-slate-900">Descripción</h2>
-              <p className="mt-2 whitespace-pre-line leading-relaxed text-slate-600">
+              <h2 className="text-lg font-bold text-foreground">Descripción</h2>
+              <p className="mt-2 whitespace-pre-line leading-relaxed text-muted-foreground">
                 {product.description}
               </p>
             </div>
