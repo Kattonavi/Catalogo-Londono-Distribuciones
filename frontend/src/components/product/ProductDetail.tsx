@@ -78,7 +78,7 @@ export function ProductDetail({
               {product.brand.name}
             </Link>
           )}
-          <h1 className="mt-2 text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
             {product.name}
           </h1>
           {product.shortDescription && (
@@ -134,7 +134,7 @@ export function ProductDetail({
 
           {product.description && (
             <div className="mt-8">
-              <h2 className="text-lg font-bold text-foreground">Descripción</h2>
+              <h2 className="font-display text-xl font-bold text-foreground">Descripción</h2>
               <p className="mt-2 whitespace-pre-line leading-relaxed text-muted-foreground">
                 {product.description}
               </p>

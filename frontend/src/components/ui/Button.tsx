@@ -1,20 +1,26 @@
 import type { ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "white";
+export type ButtonVariant =
+  | "primary"
+  | "accent"
+  | "secondary"
+  | "ghost"
+  | "white";
 export type ButtonSize = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-tight transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]";
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "bg-brand-600 text-white hover:bg-brand-700 shadow-sm shadow-brand-600/25 dark:bg-brand-500 dark:hover:bg-brand-400",
-  secondary:
-    "bg-foreground text-background hover:opacity-90",
+    "bg-brand-600 text-white shadow-lg shadow-brand-600/30 hover:bg-brand-500 hover:shadow-brand-500/40 dark:bg-brand-500 dark:hover:bg-brand-400",
+  accent:
+    "bg-lime-accent text-[#06121a] shadow-lg shadow-lime-accent/30 hover:bg-lime-accent-dark hover:shadow-lime-accent/40",
+  secondary: "bg-foreground text-background hover:opacity-90",
   ghost: "text-muted-foreground hover:bg-subtle hover:text-foreground",
   white:
-    "bg-white text-brand-700 hover:bg-brand-50 shadow-sm dark:bg-card dark:text-brand-300 dark:hover:bg-subtle",
+    "bg-white text-brand-700 shadow-sm hover:bg-brand-50 dark:bg-card dark:text-brand-300 dark:hover:bg-subtle",
 };
 
 const sizes: Record<ButtonSize, string> = {

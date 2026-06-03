@@ -30,7 +30,7 @@ export function ProductCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="group flex flex-col overflow-hidden rounded-card border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-300/60 hover:shadow-xl hover:shadow-brand-900/5 dark:hover:border-brand-500/40 dark:hover:shadow-black/40"
+      className="group relative flex flex-col overflow-hidden rounded-card border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-[0_24px_60px_-22px_rgba(45,91,255,0.45)] dark:hover:border-brand-500/60"
     >
       <Link
         href={`/productos/${product.slug}`}

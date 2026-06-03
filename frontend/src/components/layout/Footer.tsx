@@ -9,10 +9,11 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 font-black text-white">
+              <span className="relative grid size-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 font-display text-lg font-extrabold text-white">
                 L
+                <span className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-lime-accent ring-2 ring-card" />
               </span>
-              <span className="text-lg font-extrabold tracking-tight text-foreground">
+              <span className="font-display text-lg font-extrabold tracking-tight text-foreground">
                 Londoño Distribuciones
               </span>
             </div>

@@ -24,15 +24,18 @@ export function TrustContact() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="grid gap-4 sm:grid-cols-3">
-        {items.map((item) => (
+        {items.map((item, i) => (
           <div
             key={item.title}
-            className="rounded-card border border-border bg-card p-6 shadow-sm"
+            className="group relative overflow-hidden rounded-card border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-brand-400/60 hover:shadow-[0_24px_60px_-26px_rgba(45,91,255,0.4)]"
           >
-            <span className="grid size-11 place-items-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300">
+            <span className="font-display text-xs font-bold tracking-[0.2em] text-muted-foreground/60">
+              0{i + 1}
+            </span>
+            <span className="mt-4 grid size-12 place-items-center rounded-2xl bg-brand-500/10 text-brand-600 ring-1 ring-brand-500/20 transition-colors group-hover:bg-brand-500 group-hover:text-white dark:text-brand-300">
               <item.icon className="size-6" />
             </span>
-            <h3 className="mt-4 text-lg font-bold text-foreground">
+            <h3 className="mt-4 font-display text-lg font-bold text-foreground">
               {item.title}
             </h3>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
@@ -42,14 +45,17 @@ export function TrustContact() {
         ))}
       </div>
 
-      <div className="mt-8 overflow-hidden rounded-card bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950 p-8 text-white shadow-lg shadow-brand-900/20 ring-1 ring-white/10 sm:p-12">
-        <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="grain relative mt-8 overflow-hidden rounded-card bg-[#05070f] p-8 text-white ring-1 ring-white/10 sm:p-12">
+        <div className="bg-grid-onlight pointer-events-none absolute inset-0 opacity-70" />
+        <div className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full bg-brand-600/40 blur-[110px]" />
+        <div className="pointer-events-none absolute -bottom-24 left-1/4 size-72 rounded-full bg-wa/15 blur-[110px]" />
+        <div className="relative flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="max-w-xl">
-            <h3 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight sm:text-3xl">
-              <MessageCircle className="size-7 text-wa" />
+            <h3 className="flex items-center gap-2.5 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
+              <MessageCircle className="size-8 text-wa" />
               ¿Listo para hacer tu pedido?
             </h3>
-            <p className="mt-2 text-brand-100">
+            <p className="mt-3 text-slate-300">
               Escríbenos por WhatsApp y te atendemos de inmediato. Sin
               complicaciones.
             </p>

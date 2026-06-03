@@ -12,11 +12,17 @@ export const metadata: Metadata = {
 export default function CatalogoPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <header className="mb-6">
-        <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+      <header className="mb-8">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="h-4 w-1 rounded-full bg-lime-accent" />
+          <span className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
+            Todo el catálogo
+          </span>
+        </div>
+        <h1 className="font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
           Catálogo
         </h1>
-        <p className="mt-1 text-muted-foreground">
+        <p className="mt-2 text-muted-foreground">
           Encuentra productos por marca, categoría o promoción.
         </p>
       </header>

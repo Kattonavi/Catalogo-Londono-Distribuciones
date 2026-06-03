@@ -19,15 +19,23 @@ export default async function PromocionesPage() {
   return (
     <div>
       {/* Hero corto */}
-      <section className="bg-gradient-to-br from-promo to-rose-600 text-white">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm font-semibold backdrop-blur">
-            <Flame className="size-4" /> Ofertas activas
+      <section className="grain relative isolate overflow-hidden bg-[#05070f] text-white">
+        <div className="bg-grid-onlight grid-fade pointer-events-none absolute inset-0" />
+        <div className="pointer-events-none absolute -left-20 -top-24 size-96 rounded-full bg-promo/30 blur-[120px]" />
+        <div className="pointer-events-none absolute right-0 top-1/2 size-80 rounded-full bg-brand-600/30 blur-[120px]" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-promo/60 to-transparent" />
+        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-rose-200 backdrop-blur">
+            <Flame className="size-3.5 text-promo" /> Ofertas activas
           </span>
-          <h1 className="mt-5 text-4xl font-black tracking-tight sm:text-5xl">
-            Promociones
+          <h1 className="mt-6 font-display text-5xl font-extrabold tracking-tight sm:text-7xl">
+            Promo
+            <span className="relative text-promo">
+              ciones
+              <span className="absolute -bottom-1 left-0 h-[3px] w-full rounded-full bg-lime-accent" />
+            </span>
           </h1>
-          <p className="mt-3 max-w-xl text-lg text-rose-50">
+          <p className="mt-5 max-w-xl text-lg text-slate-300">
             Los mejores precios del catálogo, en un solo lugar. Pide rápido por
             WhatsApp antes de que se agoten.
           </p>
@@ -57,11 +65,13 @@ export default async function PromocionesPage() {
           </div>
         )}
 
-        <div className="mt-12 flex flex-col items-center gap-4 rounded-card bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950 px-6 py-10 text-center text-white shadow-lg shadow-brand-900/20 ring-1 ring-white/10">
-          <h2 className="text-2xl font-extrabold tracking-tight">
+        <div className="grain relative mt-12 flex flex-col items-center gap-4 overflow-hidden rounded-card bg-[#05070f] px-6 py-12 text-center text-white ring-1 ring-white/10">
+          <div className="bg-grid-onlight pointer-events-none absolute inset-0 opacity-70" />
+          <div className="pointer-events-none absolute -top-16 left-1/2 size-72 -translate-x-1/2 rounded-full bg-brand-600/30 blur-[110px]" />
+          <h2 className="relative font-display text-3xl font-extrabold tracking-tight">
             ¿Quieres pedir alguna promoción?
           </h2>
-          <p className="max-w-md text-brand-100">
+          <p className="relative max-w-md text-slate-300">
             Escríbenos y te ayudamos a armar tu pedido al instante.
           </p>
           <WhatsAppButton

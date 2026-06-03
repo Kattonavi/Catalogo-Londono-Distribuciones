@@ -1,44 +1,50 @@
 @import "tailwindcss";
 
-/* Activa el modo oscuro por clase `.dark` en <html> (en vez de media query),
-   para poder alternar manualmente con el botón de tema. */
+/* Modo oscuro por clase `.dark` en <html> (alternable con el botón de tema). */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ===================== Tokens de diseño (Tailwind 4) ===================== */
+/* ===================== Tokens de diseño (Tailwind 4) ===================== *
+ * Identidad "Cobalto Eléctrico": azul eléctrico dominante + acento lima neón,
+ * base midnight en modo oscuro (héroe). Tipografía Bricolage + Plus Jakarta.  */
 @theme {
-  /* Marca: azul — confiable, comercial y con buen contraste en ambos modos. */
-  --color-brand-50: #eff6ff;
-  --color-brand-100: #dbeafe;
-  --color-brand-200: #bfdbfe;
-  --color-brand-300: #93c5fd;
-  --color-brand-400: #60a5fa;
-  --color-brand-500: #3b82f6;
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
-  --color-brand-800: #1e40af;
-  --color-brand-900: #1e3a8a;
-  --color-brand-950: #172554;
+  /* Marca: cobalto eléctrico. */
+  --color-brand-50: #eef3ff;
+  --color-brand-100: #dce6ff;
+  --color-brand-200: #bccfff;
+  --color-brand-300: #8fabff;
+  --color-brand-400: #5c82ff;
+  --color-brand-500: #2d5bff;  /* signature */
+  --color-brand-600: #1f47e6;
+  --color-brand-700: #1a39c0;
+  --color-brand-800: #1b3299;
+  --color-brand-900: #1a2e78;
+  --color-brand-950: #111c49;
+
+  /* Acento: lima neón (uso puntual: chispas, flechas, estados activos). */
+  --color-lime-accent: #c8ff3d;
+  --color-lime-accent-dark: #a9e017;
 
   /* WhatsApp (reservado solo para sus botones). */
   --color-wa: #25d366;
   --color-wa-dark: #1ebe5d;
 
-  /* Semántica de badges. */
-  --color-promo: #f43f5e;     /* promoción / descuento (rose) */
-  --color-new: #06b6d4;       /* nuevo (cyan) */
-  --color-featured: #f59e0b;  /* destacado (amber) */
+  /* Semántica de badges (vibrantes). */
+  --color-promo: #ff3d6e;     /* promoción / descuento */
+  --color-new: #19d3e6;       /* nuevo (cyan eléctrico) */
+  --color-featured: #ffb020;  /* destacado (ámbar) */
 
-  /* Tipografía: stack del sistema (fiable y nítido, sin descargas externas). */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  /* Tipografía. */
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-jakarta), ui-sans-serif,
+    system-ui, sans-serif;
 
-  /* Radio de tarjetas. */
+  /* Radios. */
   --radius-card: 1.25rem;
 }
 
-/* Tokens semánticos: se mapean a variables que cambian entre claro/oscuro.
-   `inline` hace que las utilidades (bg-card, text-foreground, …) lean la
-   variable en tiempo de ejecución, por lo que responden a la clase `.dark`. */
+/* Tokens semánticos que cambian entre claro/oscuro vía `.dark`.
+   `inline` hace que bg-card, text-foreground, etc. lean la variable viva. */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -50,33 +56,42 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 }
 
 /* ===================== Esquemas claro / oscuro ===================== */
 :root {
   color-scheme: light;
-  --background: #f5f8fd;       /* lienzo claro con leve tinte azul */
-  --foreground: #0f1c33;       /* texto principal (navy oscuro) */
-  --card: #ffffff;             /* superficies / tarjetas */
-  --muted: #eaf0fa;            /* fondos sutiles (chips, placeholders) */
-  --muted-foreground: #5b6b86; /* texto secundario */
-  --subtle: #f1f5fb;           /* fondos aún más tenues / hover */
-  --border: #dbe3f0;           /* bordes */
-  --input: #ffffff;            /* fondo de inputs */
-  --ring: #3b82f6;             /* anillo de foco */
+  --background: #f4f7ff;        /* lienzo claro con tinte azul */
+  --foreground: #0a1024;        /* tinta navy profunda */
+  --card: #ffffff;
+  --muted: #eaf0fe;
+  --muted-foreground: #54607e;
+  --subtle: #f0f4fe;
+  --border: #e0e7f7;
+  --input: #ffffff;
+  --ring: #2d5bff;
+  --accent: #c8ff3d;
+  --accent-foreground: #0a1024;
+  /* Color de las líneas de la rejilla de fondo. */
+  --grid-line: rgba(45, 91, 255, 0.07);
 }
 
 .dark {
   color-scheme: dark;
-  --background: #070d1c;       /* base oscura azul profunda */
-  --foreground: #e8eefb;       /* texto principal claro */
-  --card: #0f1a30;             /* paneles / tarjetas azul oscuro */
-  --muted: #16243f;            /* fondos sutiles */
-  --muted-foreground: #93a6c7; /* texto secundario */
-  --subtle: #132038;           /* hover / fondos tenues */
-  --border: #243650;           /* bordes */
-  --input: #0f1a30;            /* fondo de inputs */
-  --ring: #60a5fa;             /* anillo de foco */
+  --background: #05070f;        /* midnight (héroe) */
+  --foreground: #e8ecfb;
+  --card: #0c1326;              /* paneles azul-noche */
+  --muted: #121b34;
+  --muted-foreground: #8e9bc2;
+  --subtle: #0f1830;
+  --border: #1e2a48;
+  --input: #0c1326;
+  --ring: #5c82ff;
+  --accent: #c8ff3d;
+  --accent-foreground: #06121a;
+  --grid-line: rgba(124, 154, 255, 0.08);
 }
 
 /* ===================== Base ===================== */
@@ -90,10 +105,34 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Respeta reduce-motion: desactiva animaciones y scroll suave. */
+::selection {
+  background: var(--color-brand-500);
+  color: #ffffff;
+}
+
+/* Scrollbar afinado para reforzar la temática. */
+* {
+  scrollbar-color: var(--border) transparent;
+}
+*::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+  background-clip: padding-box;
+}
+
+/* Respeta reduce-motion. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -107,7 +146,56 @@ body {
   }
 }
 
-/* Shimmer sutil para los skeletons de carga. */
+/* ===================== Utilidades temáticas ===================== */
+
+/* Rejilla técnica de fondo (se adapta al tema vía --grid-line). */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* Rejilla clara para superficies oscuras (héroe / CTA). */
+.bg-grid-onlight {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 54px 54px;
+}
+
+/* Desvanecido radial para difuminar bordes de la rejilla. */
+.grid-fade {
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 55%, transparent 100%);
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 55%, transparent 100%);
+}
+
+/* Grano sutil (atmósfera) sobre superficies oscuras. */
+.grain {
+  position: relative;
+}
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* Resplandor cobalto reutilizable (sombra suave de marca). */
+.glow-brand {
+  box-shadow: 0 18px 50px -18px rgba(45, 91, 255, 0.55);
+}
+
+/* Texto con realce lima (subrayado al estilo marcador). */
+.accent-underline {
+  background-image: linear-gradient(transparent 62%, var(--color-lime-accent) 62%);
+  background-repeat: no-repeat;
+}
+
+/* Shimmer de skeletons. */
 @keyframes shimmer {
   100% {
     transform: translateX(100%);
@@ -128,7 +216,7 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.65),
+    rgba(255, 255, 255, 0.5),
     transparent
   );
   animation: shimmer 1.6s infinite;
@@ -138,7 +226,7 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.06),
+    rgba(124, 154, 255, 0.08),
     transparent
   );
 }

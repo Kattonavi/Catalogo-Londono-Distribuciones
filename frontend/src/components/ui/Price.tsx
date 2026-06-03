@@ -20,8 +20,8 @@ export function Price({
     <div className={cn("flex flex-wrap items-baseline gap-x-2 gap-y-0.5", className)}>
       <span
         className={cn(
-          "font-extrabold tracking-tight text-foreground",
-          size === "lg" ? "text-3xl" : "text-xl",
+          "font-display font-extrabold tracking-tight text-foreground",
+          size === "lg" ? "text-4xl" : "text-xl",
         )}
       >
         {formatPrice(currentPrice, currency)}
