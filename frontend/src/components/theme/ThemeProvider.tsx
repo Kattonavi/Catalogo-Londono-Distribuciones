@@ -4,8 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 
@@ -33,32 +32,48 @@ function applyDomTheme(theme: Theme) {
   }
 }
 
+/** Lee el tema vivo desde la clase del <html> (aplicada por el script inline). */
+function getThemeSnapshot(): Theme {
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
+/** Suscribe a cambios de clase en <html> para mantener el estado sincronizado. */
+function subscribeTheme(callback: () => void) {
+  const observer = new MutationObserver(callback);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+  return () => observer.disconnect();
+}
+
+const noopSubscribe = () => () => {};
+
 /**
  * Provee el tema actual y permite alternarlo. El tema real ya se aplica en
  * <html> mediante un script inline antes del primer paint (sin parpadeo);
- * aquí solo sincronizamos el estado de React para el botón de tema.
+ * aquí solo leemos ese estado externo con useSyncExternalStore (sin setState
+ * en efectos) para sincronizar el botón de tema.
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const isDark = document.documentElement.classList.contains("dark");
-    setThemeState(isDark ? "dark" : "light");
-    setMounted(true);
-  }, []);
+  const theme = useSyncExternalStore(
+    subscribeTheme,
+    getThemeSnapshot,
+    () => "light" as Theme,
+  );
+  // `mounted` hidratación-seguro: false en SSR/primer render, true tras hidratar.
+  const mounted = useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
 
   const setTheme = useCallback((next: Theme) => {
-    setThemeState(next);
     applyDomTheme(next);
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setThemeState((prev) => {
-      const next: Theme = prev === "dark" ? "light" : "dark";
-      applyDomTheme(next);
-      return next;
-    });
+    applyDomTheme(getThemeSnapshot() === "dark" ? "light" : "dark");
   }, []);
 
   return (

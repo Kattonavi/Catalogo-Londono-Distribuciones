@@ -116,7 +116,7 @@ export function CatalogFilters({
               className={cn(
                 "rounded-full border px-4 py-2 text-sm font-semibold transition-colors",
                 active
-                  ? "border-brand-600 bg-brand-600 text-white dark:border-brand-500 dark:bg-brand-500"
+                  ? "border-transparent bg-soda text-white"
                   : "border-border bg-card text-muted-foreground hover:border-brand-300 hover:text-brand-600 dark:hover:text-brand-400",
               )}
             >

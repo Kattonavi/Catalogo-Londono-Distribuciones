@@ -18,11 +18,9 @@ export function SectionHeading({
       <div>
         <div className="mb-2 flex items-center gap-2">
           <span className="h-4 w-1 rounded-full bg-lime-accent" />
-          <span className="text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
-            Londoño
-          </span>
+          <span className="eyebrow text-xs text-muted-foreground">Londoño</span>
         </div>
-        <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+        <h2 className="font-display text-3xl font-black tracking-tight text-foreground sm:text-4xl">
           {title}
         </h2>
         {subtitle && <p className="mt-1.5 text-muted-foreground">{subtitle}</p>}

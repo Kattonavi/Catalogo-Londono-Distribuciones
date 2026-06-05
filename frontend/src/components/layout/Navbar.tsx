@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -17,10 +17,26 @@ const links = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
+  // Hairline de marca + más blur al desplazarse, para asentar la barra.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/70 backdrop-blur-xl">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b backdrop-blur-xl transition-colors duration-300",
+        scrolled
+          ? "border-brand-500/15 bg-background/85 shadow-[0_8px_30px_-24px_rgba(45,91,255,0.6)]"
+          : "border-border bg-background/70",
+      )}
+    >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="group flex items-center gap-2.5" onClick={() => setOpen(false)}>
           <span className="relative grid size-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 font-display text-lg font-extrabold text-white shadow-lg shadow-brand-600/30">

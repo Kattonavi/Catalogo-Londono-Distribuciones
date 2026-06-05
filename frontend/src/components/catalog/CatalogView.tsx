@@ -182,7 +182,7 @@ export function CatalogView() {
               productsQuery.isFetching && "opacity-60",
             )}
           >
-            <ProductGrid products={products} />
+            <ProductGrid products={products} eager />
           </div>
 
           {totalPages > 1 && (

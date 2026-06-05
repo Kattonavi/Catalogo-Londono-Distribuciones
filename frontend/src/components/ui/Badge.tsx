@@ -8,11 +8,13 @@ export type BadgeVariant =
   | "discount"
   | "neutral";
 
+// Texto navy oscuro sobre los fondos claros (cyan/ámbar/rosa) para cumplir
+// contraste WCAG AA (blanco sobre estos tonos no llega a 4.5:1).
 const variantStyles: Record<BadgeVariant, string> = {
-  promo: "bg-promo text-white",
-  new: "bg-new text-white",
-  featured: "bg-featured text-white",
-  discount: "bg-promo text-white shadow-sm",
+  promo: "bg-promo text-[#0a1024] shadow-[0_0_0_3px_rgba(200,255,61,0.18)]",
+  new: "bg-new text-[#0a1024]",
+  featured: "bg-featured text-[#0a1024]",
+  discount: "bg-promo text-[#0a1024] shadow-sm",
   neutral: "bg-foreground/80 text-background backdrop-blur",
 };
 

@@ -4,11 +4,10 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import type { ProductCard as ProductCardType } from "@/types/product";
 import { productMessage } from "@/lib/whatsapp";
-import { cn } from "@/lib/utils";
 import { ProductImage } from "@/components/ui/ProductImage";
 import { ProductBadges } from "@/components/ui/ProductBadges";
-import { Badge } from "@/components/ui/Badge";
-import { Price } from "@/components/ui/Price";
+import { ProductChips } from "@/components/ui/ProductChips";
+import { PriceMarquee } from "@/components/ui/PriceMarquee";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 
 export function ProductCard({
@@ -20,17 +19,13 @@ export function ProductCard({
   whatsappEvent?: "whatsapp-click" | "promotion-click";
   priority?: boolean;
 }) {
-  const subtitle = [product.flavor, product.presentation]
-    .filter(Boolean)
-    .join(" · ");
-
   return (
     <motion.article
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="group relative flex flex-col overflow-hidden rounded-card border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-[0_24px_60px_-22px_rgba(45,91,255,0.45)] dark:hover:border-brand-500/60"
+      className="group relative flex flex-col overflow-hidden rounded-card border border-border bg-card shadow-editorial transition-all duration-300 hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-cold"
     >
       <Link
         href={`/productos/${product.slug}`}
@@ -39,44 +34,56 @@ export function ProductCard({
         <ProductImage
           src={product.imageUrl}
           alt={product.name}
+          brand={product.brand?.name}
+          container={product.containerType}
+          presentation={product.presentation}
           priority={priority}
+          bubbles={false}
           className="transition-transform duration-500 group-hover:scale-105"
         />
+
+        {/* Banda de escarcha: funde la imagen con el cuerpo de la tarjeta. */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-card via-card/55 to-transparent" />
+
         <ProductBadges
           product={product}
           className="absolute left-3 top-3 flex flex-col items-start gap-1.5"
         />
+
+        {/* Sello circular de descuento (sustituye el rectángulo). */}
         {product.discountPercentage != null && (
-          <Badge
-            variant="discount"
-            className="absolute right-3 top-3 text-sm shadow"
-          >
+          <span className="absolute right-3 top-3 grid size-12 -rotate-6 place-items-center rounded-full bg-promo text-center font-display text-sm font-black leading-none text-[#0a1024] shadow-[0_10px_24px_-8px_rgba(255,61,110,0.7)]">
             -{product.discountPercentage}%
-          </Badge>
+          </span>
         )}
       </Link>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         {product.brand && (
-          <span className="text-xs font-semibold uppercase tracking-wide text-brand-600 dark:text-brand-400">
+          <span className="eyebrow text-[11px] text-brand-600 dark:text-brand-400">
             {product.brand.name}
           </span>
         )}
+
         <Link href={`/productos/${product.slug}`} className="group/title">
-          <h3 className="line-clamp-2 font-bold leading-snug text-foreground transition-colors group-hover/title:text-brand-600 dark:group-hover/title:text-brand-400">
+          <h3 className="line-clamp-2 font-display text-[17px] font-bold leading-snug text-foreground transition-colors group-hover/title:text-brand-600 dark:group-hover/title:text-brand-400">
             {product.name}
           </h3>
         </Link>
-        {subtitle && (
-          <p className="line-clamp-1 text-sm text-muted-foreground">{subtitle}</p>
-        )}
 
-        <div className="mt-auto flex flex-col gap-3 pt-2">
-          <Price
-            currentPrice={product.currentPrice}
-            oldPrice={product.oldPrice}
-            currency={product.currency}
-          />
+        <ProductChips product={product} />
+
+        <div className="mt-auto flex flex-col gap-3 pt-3">
+          <div className="border-t border-border pt-3">
+            <div className="price-tag pl-2.5">
+              <PriceMarquee
+                currentPrice={product.currentPrice}
+                oldPrice={product.oldPrice}
+                currency={product.currency}
+                promo={product.isPromo || product.discountPercentage != null}
+              />
+            </div>
+          </div>
           <WhatsAppButton
             message={productMessage(product.name)}
             label="WhatsApp"
@@ -84,7 +91,7 @@ export function ProductCard({
             eventType={whatsappEvent}
             size="sm"
             fullWidth
-            className={cn("justify-center")}
+            className="justify-center"
           />
         </div>
       </div>

@@ -22,7 +22,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero />
+      <Hero featured={featured[0] ?? promotions[0] ?? news[0] ?? null} />
       <CategoryShowcase categories={categories} />
       <ProductSection
         title="Promociones"

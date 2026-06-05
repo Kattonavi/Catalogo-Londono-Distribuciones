@@ -15,7 +15,7 @@ export function BrandShowcase({ brands }: { brands: BrandSummary[] }) {
           <Link
             key={brand.id}
             href={`/catalogo?marca=${brand.slug}`}
-            className="flex min-w-[8.5rem] shrink-0 flex-col items-center gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-[0_20px_44px_-24px_rgba(45,91,255,0.45)]"
+            className="flex min-w-[8.5rem] shrink-0 flex-col items-center gap-3 rounded-2xl border border-border bg-card p-5 shadow-editorial transition-all hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-cold"
           >
             {brand.logoUrl ? (
               <span className="relative size-14 overflow-hidden rounded-full bg-muted">

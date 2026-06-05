@@ -1,7 +1,7 @@
 /** Placeholder de tarjeta de producto durante la carga. */
 export function SkeletonCard() {
   return (
-    <div className="overflow-hidden rounded-card border border-border bg-card">
+    <div className="overflow-hidden rounded-card border border-border bg-card shadow-editorial">
       <div className="skeleton aspect-[4/5] w-full" />
       <div className="space-y-3 p-4">
         <div className="skeleton h-3 w-1/3 rounded-full" />

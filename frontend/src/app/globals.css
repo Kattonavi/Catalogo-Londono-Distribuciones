@@ -239,3 +239,243 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* ===================== Frío Editorial — superficies frías ===================== *
+ * Capa de identidad de bebida: gradientes soda, glass esmerilado (condensación),
+ * sombra editorial (borde definido + caída larga, NO aura difusa) y la firma:
+ * la Columna de Burbujas de CO2 (un único keyframe `rise` compartido).         */
+
+:root {
+  --grad-soda: linear-gradient(125deg, #1a39c0 0%, #2d5bff 52%, #5c82ff 100%);
+  --grad-frost-text: linear-gradient(135deg, #2d5bff 0%, #4f7dff 45%, #19d3e6 100%);
+  --grad-frost-light: linear-gradient(160deg, #f4f7ff 0%, #eaf0fe 45%, #dce6ff 100%);
+  --shadow-editorial: 0 1px 0 0 var(--border), 0 22px 40px -28px rgba(10, 16, 36, 0.35);
+  --shadow-cold: 0 24px 60px -22px rgba(25, 150, 230, 0.4);
+}
+.dark {
+  --shadow-editorial: 0 0 0 1px rgba(124, 154, 255, 0.06),
+    0 26px 50px -30px rgba(0, 0, 0, 0.7);
+  --shadow-cold: 0 24px 60px -22px rgba(45, 91, 255, 0.55);
+}
+
+/* Texto con gradiente frost (solo palabras-acento de titulares). */
+.text-frost {
+  background-image: var(--grad-frost-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Sombras utilitarias de la identidad. */
+.shadow-editorial {
+  box-shadow: var(--shadow-editorial);
+}
+.shadow-cold {
+  box-shadow: var(--shadow-cold);
+}
+
+/* Superficies frías. */
+.bg-soda {
+  background-image: var(--grad-soda);
+}
+.surface-frost {
+  background-image: var(--grad-frost-light);
+}
+.dark .surface-frost {
+  background-image: linear-gradient(160deg, #0c1326, #121b34);
+}
+
+/* Glass esmerilado (condensación de bebida fría). */
+.glass {
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 18px 40px -24px rgba(45, 91, 255, 0.35);
+}
+.dark .glass {
+  background: rgba(12, 19, 38, 0.55);
+  border: 1px solid rgba(124, 154, 255, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(124, 154, 255, 0.1),
+    0 18px 40px -24px rgba(45, 91, 255, 0.5);
+}
+
+/* Aro/halo glacial cyan (vitrina de la ficha). */
+.ring-frost {
+  box-shadow:
+    0 0 0 1px rgba(25, 211, 230, 0.25),
+    0 0 40px -10px rgba(25, 211, 230, 0.35);
+}
+
+/* Versalitas editoriales reutilizables. */
+.eyebrow {
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Etiqueta de precio: borde-izquierda lima. */
+.price-tag {
+  border-left: 3px solid var(--color-lime-accent);
+}
+
+/* Barra-sello lima bajo precios/títulos (se dibuja en hover o con .is-on). */
+.ink-bar {
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 3px;
+  width: 100%;
+  border-radius: 9999px;
+  background: var(--color-lime-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.group:hover .ink-bar,
+.ink-bar.is-on {
+  transform: scaleX(1) rotate(-1.5deg);
+}
+
+/* ---- Burbujas de CO2 (Columna de Burbujas): keyframe ÚNICO ---- */
+@keyframes rise {
+  0% {
+    transform: translateY(0) scale(0.85);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-160%) scale(0.4);
+    opacity: 0;
+  }
+}
+.bubble {
+  position: absolute;
+  bottom: -10%;
+  left: var(--x, 50%);
+  width: var(--s, 10px);
+  height: var(--s, 10px);
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.55),
+    var(--color-brand-300) 60%,
+    transparent 75%
+  );
+  box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.4);
+  animation: rise var(--dur, 11s) linear infinite;
+  animation-delay: var(--d, 0s);
+  will-change: transform, opacity;
+}
+.bubble--lime {
+  background: radial-gradient(
+    circle at 35% 30%,
+    #f2ffd0,
+    var(--color-lime-accent) 65%,
+    transparent 78%
+  );
+}
+.bubble--rose {
+  background: radial-gradient(
+    circle at 35% 30%,
+    #ffd9e4,
+    var(--color-promo) 65%,
+    transparent 78%
+  );
+}
+
+/* Subrayado lima que se dibuja al entrar. */
+@keyframes draw-underline {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.underline-draw {
+  display: inline-block;
+  position: relative;
+}
+.underline-draw::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 3px;
+  width: 100%;
+  border-radius: 9999px;
+  background: var(--color-lime-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: draw-underline 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+}
+
+/* Frost sweep en CTAs primarios (luz que barre el hielo). */
+@keyframes frost-sweep {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(220%);
+  }
+}
+.frost-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.frost-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    75deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+}
+.frost-sweep:hover::after {
+  animation: frost-sweep 0.9s ease;
+}
+
+/* Líquido que sube una vez al cargar (panel-vaso del hero). */
+@keyframes fill-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.liquid-fill {
+  animation: fill-up 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+/* Reduced motion: deja la UI estática y legible (complementa el bloque base). */
+@media (prefers-reduced-motion: reduce) {
+  .bubble {
+    animation: none;
+    opacity: 0.16;
+    transform: translateY(-120px) scale(0.7);
+    will-change: auto; /* libera la capa de compositor sin animación */
+  }
+  .underline-draw::after {
+    animation: none;
+    transform: scaleX(1);
+  }
+  .liquid-fill {
+    animation: none;
+  }
+  .frost-sweep::after {
+    display: none;
+  }
+}

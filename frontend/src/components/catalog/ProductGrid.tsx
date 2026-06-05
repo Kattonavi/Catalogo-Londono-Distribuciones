@@ -5,9 +5,12 @@ import { ProductCard } from "./ProductCard";
 export function ProductGrid({
   products,
   whatsappEvent = "whatsapp-click",
+  eager = false,
 }: {
   products: ProductCardType[];
   whatsappEvent?: "whatsapp-click" | "promotion-click";
+  /** Marca como `priority` las primeras imágenes (solo grids above-the-fold). */
+  eager?: boolean;
 }) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -16,7 +19,7 @@ export function ProductGrid({
           key={product.id}
           product={product}
           whatsappEvent={whatsappEvent}
-          priority={i < 4}
+          priority={eager && i < 4}
         />
       ))}
     </div>
